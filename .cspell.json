@@ -1,4 +1,4 @@
 {
     "import": ".cspell-base.json",
-    "words": ["vite", "modivir", "globbing"]
+    "words": ["vite", "modivir", "globbing", "browserslistrc"]
 }
