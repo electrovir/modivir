@@ -1,4 +1,5 @@
-import {buildMode, Package, packageConfigPaths} from '@packages/common/environment';
+import {buildMode, Package, viteDevServerEnvKey} from '@packages/common/environment';
+import {packageConfigPaths} from '@packages/common/file-paths';
 import {ChildProcessWithoutNullStreams, spawn} from 'child_process';
 import electronPath from 'electron';
 import {RollupOutput, RollupWatcher} from 'rollup';
@@ -71,7 +72,7 @@ function setupMainPackageWatcher(
         const host = viteDevServer.config.server.host || 'localhost';
         const port = viteDevServer.config.server.port; // Vite searches for and occupies the first free port: 3000, 3001, 3002 and so on
         const path = '/';
-        process.env['VITE_DEV_SERVER_URL'] = `${protocol}//${host}:${port}${path}`;
+        process.env[viteDevServerEnvKey] = `${protocol}//${host}:${port}${path}`;
     }
 
     const logger = createLogger(sharedConfig.logLevel, {

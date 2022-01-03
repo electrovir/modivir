@@ -1,4 +1,5 @@
-import {buildMode, packageConfigPaths} from '@packages/common/environment';
+import {buildMode} from '@packages/common/environment';
+import {packageConfigPaths} from '@packages/common/file-paths';
 import {dirname} from 'path';
 import {build} from 'vite';
 

@@ -36,7 +36,7 @@ export function generateViteConfig({
         ...envDir,
         resolve: {
             alias: {
-                '/@packages/': packagesDir,
+                '@packages': packagesDir,
             },
         },
         build: {

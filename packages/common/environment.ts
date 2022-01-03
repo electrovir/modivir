@@ -1,6 +1,3 @@
-import {join} from 'path';
-import {packagesDir} from './file-paths';
-
 export enum BuildMode {
     Prod = 'production',
     Dev = 'development',
@@ -23,16 +20,11 @@ function getBuildMode(): BuildMode {
 
 export const buildMode = getBuildMode();
 
+export const viteDevServerEnvKey = 'VITE_DEV_SERVER_URL';
+export const devServerUrl = process.env[viteDevServerEnvKey];
+
 export enum Package {
     Main = 'main',
     Preload = 'preload',
     Renderer = 'renderer',
 }
-
-const viteFileName = 'vite.config.ts';
-
-export const packageConfigPaths: Record<Package, string> = {
-    [Package.Main]: join(packagesDir, Package.Main, viteFileName),
-    [Package.Preload]: join(packagesDir, Package.Preload, viteFileName),
-    [Package.Renderer]: join(packagesDir, Package.Renderer, 'vite', viteFileName),
-};

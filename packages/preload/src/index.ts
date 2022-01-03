@@ -1,7 +1,3 @@
-/** @module preload */
-
-import type {BinaryLike} from 'crypto';
-import {createHash} from 'crypto';
 import {contextBridge, ipcRenderer} from 'electron';
 
 /**
@@ -26,20 +22,6 @@ import {contextBridge, ipcRenderer} from 'electron';
  *     console.log(window.versions);
  */
 contextBridge.exposeInMainWorld('versions', process.versions);
-
-/**
- * Safe expose node.js API
- *
- * @example
- *     window.nodeCrypto('data');
- */
-contextBridge.exposeInMainWorld('nodeCrypto', {
-    sha256sum(data: BinaryLike) {
-        const hash = createHash('sha256');
-        hash.update(data);
-        return hash.digest('hex');
-    },
-});
 
 contextBridge.exposeInMainWorld('api', {
     send: (channel: string, data: any) => {

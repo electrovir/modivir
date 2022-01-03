@@ -1,9 +1,11 @@
-if (process.env.VITE_APP_VERSION === undefined) {
+function calculateViteVersion() {
     const now = new Date();
-    process.env.VITE_APP_VERSION = `${now.getUTCFullYear() - 2000}.${
-        now.getUTCMonth() + 1
-    }.${now.getUTCDate()}-${now.getUTCHours() * 60 + now.getUTCMinutes()}`;
+    return `${now.getUTCFullYear() - 2000}.${now.getUTCMonth() + 1}.${now.getUTCDate()}-${
+        now.getUTCHours() * 60 + now.getUTCMinutes()
+    }`;
 }
+
+const viteVersion = process.env['VITE_APP_VERSION'] || calculateViteVersion();
 
 /**
  * @type {import('electron-builder').Configuration}
@@ -16,8 +18,9 @@ const config = {
     },
     files: ['packages/**/dist/**'],
     extraMetadata: {
-        version: process.env.VITE_APP_VERSION,
+        version: viteVersion,
     },
 };
 
+// this needs to use an archaic export format for electron-builder
 module.exports = config;
