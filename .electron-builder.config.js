@@ -14,7 +14,7 @@ const viteVersion = process.env['VITE_APP_VERSION'] || calculateViteVersion();
 const config = {
     directories: {
         output: 'dist',
-        buildResources: 'buildResources',
+        buildResources: 'build-resources',
     },
     files: ['packages/**/dist/**'],
     extraMetadata: {
