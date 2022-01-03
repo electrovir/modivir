@@ -1,5 +1,5 @@
-import {buildMode} from '@packages/common/environment';
-import {packageConfigPaths} from '@packages/common/file-paths';
+import {buildMode} from '@packages/common/src/environment';
+import {packageConfigPaths} from '@packages/common/src/file-paths';
 import {dirname} from 'path';
 import {build} from 'vite';
 
@@ -21,7 +21,7 @@ async function buildAll() {
 
         console.timeEnd(timeLabel);
         console.groupEnd();
-        console.log('\n'); // Just for pretty print
+        console.info('\n'); // Just for pretty print
     }
     console.timeEnd(totalTimeLabel);
 }

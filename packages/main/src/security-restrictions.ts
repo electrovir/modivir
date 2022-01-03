@@ -1,4 +1,4 @@
-import {devServerUrl} from '@packages/common/environment';
+import {devServerUrl} from '@packages/common/src/environment';
 import {App, Session, shell, WebPreferences} from 'electron';
 import {URL} from 'url';
 

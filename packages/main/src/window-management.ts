@@ -1,5 +1,5 @@
-import {devServerUrl} from '@packages/common/environment';
-import {repoDir} from '@packages/common/file-paths';
+import {devServerUrl} from '@packages/common/src/environment';
+import {repoDir} from '@packages/common/src/file-paths';
 import {App, BrowserWindow} from 'electron';
 import {join} from 'path';
 import {URL} from 'url';

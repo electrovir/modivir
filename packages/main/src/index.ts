@@ -1,4 +1,4 @@
-import {BuildMode, buildMode} from '@packages/common/environment';
+import {BuildMode, buildMode} from '@packages/common/src/environment';
 import {app} from 'electron';
 import {checkForUpdates} from './auto-updates';
 import {setupIpcCommunication} from './process-communication';

@@ -1,7 +1,7 @@
+import {chrome} from '@packages/common/src/electron-vendors.cache.json';
 import {builtinModules} from 'module';
 import {join} from 'path';
 import type {UserConfig} from 'vite';
-import {chrome} from '../../../.electron-vendors.cache.json';
 import {alwaysReloadPlugin} from './always-reload-plugin';
 
 const PACKAGE_ROOT = join(__dirname, '../');

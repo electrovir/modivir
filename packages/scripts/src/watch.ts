@@ -1,5 +1,5 @@
-import {buildMode, Package, viteDevServerEnvKey} from '@packages/common/environment';
-import {packageConfigPaths} from '@packages/common/file-paths';
+import {buildMode, Package, viteDevServerEnvKey} from '@packages/common/src/environment';
+import {packageConfigPaths} from '@packages/common/src/file-paths';
 import {ChildProcessWithoutNullStreams, spawn} from 'child_process';
 import electronPath from 'electron';
 import {RollupOutput, RollupWatcher} from 'rollup';

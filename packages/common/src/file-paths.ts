@@ -1,7 +1,7 @@
 import {dirname, join} from 'path';
 import {Package} from './environment';
 
-export const repoDir = dirname(dirname(__dirname));
+export const repoDir = dirname(dirname(dirname(__dirname)));
 export const packagesDir = join(repoDir, 'packages');
 
 const viteFileName = 'vite.config.ts';

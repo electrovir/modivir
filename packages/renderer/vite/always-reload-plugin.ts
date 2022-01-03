@@ -13,7 +13,7 @@ function mapToActualPaths(paths: Readonly<string[]>): Readonly<string[]> {
     return paths.reduce((accum, path) => {
         if (existsSync(path)) {
             if (lstatSync(path).isSymbolicLink()) {
-                console.log('reading symlink from', path);
+                console.info('reading symlink from', path);
                 // sym links AND the original path both need to be included
                 return accum.concat(readlinkSync(path), path);
             } else {
@@ -50,7 +50,7 @@ export function alwaysReloadPlugin(
                 if (!loggedAlready) {
                     loggedAlready = true;
                     // log watched stuff so that we can make sure it's not watching too much
-                    // console.log({watched: watcher.getWatched()});
+                    // console.info({watched: watcher.getWatched()});
                 }
                 // prevent duplicate calls cause the watcher is very eager to call callbacks multiple times in a row
                 if (!callingAlready) {

@@ -1,6 +1,6 @@
+import {generateViteConfig} from '@packages/common/src/vite-config';
 import {builtinModules} from 'module';
 import {UserConfig} from 'vite';
-import {generateViteConfig} from '../common/vite-config';
 
 const config: UserConfig = generateViteConfig({
     rootDir: __dirname,

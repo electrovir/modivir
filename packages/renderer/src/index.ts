@@ -5,7 +5,6 @@ const api = (window as any).api;
 
 // // handle response
 // api.on('doThing', (base64: string) => {
-//     console.log({base64});
 //     if (!base64) {
 //         return;
 //     }

@@ -49,7 +49,7 @@ async function updateVendors() {
     };
     const outputString = `${JSON.stringify(versions, null, 4)}\n`;
 
-    return writeFile('./.electron-vendors.cache.json', outputString);
+    return writeFile('./packages/common/src/electron-vendors.cache.json', outputString);
 }
 
 updateVendors().catch((error) => {

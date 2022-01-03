@@ -1,8 +1,10 @@
-import {BuildMode, buildMode} from '@packages/common/environment';
+import * as versions from '@packages/common/src/electron-vendors.cache.json';
 import {RollupOptions} from 'rollup';
 import {PluginOption, UserConfig} from 'vite';
-import * as versions from '../../.electron-vendors.cache.json';
+import {BuildMode, buildMode} from './environment';
 import {packagesDir} from './file-paths';
+
+fffffffff;
 
 export type ViteConfigInputs = {
     /**
