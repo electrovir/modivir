@@ -1,10 +1,10 @@
 /** Same as array.prototype.filter but works with async filter callbacks. */
 export async function asyncFilter<ArrayContents>(
-    arrayToFilter: ArrayContents[],
+    arrayToFilter: Readonly<ArrayContents[]>,
     callback: (
         arrayEntry: ArrayContents,
         index: number,
-        array: ArrayContents[],
+        array: Readonly<ArrayContents[]>,
     ) => boolean | Promise<boolean>,
 ): Promise<ArrayContents[]> {
     const mappedOutput = await Promise.all(arrayToFilter.map(callback));
@@ -16,11 +16,11 @@ export async function asyncFilter<ArrayContents>(
 
 /** Maps the given array with the given callback and then filters out null and undefined mapped values. */
 export function filterMap<ArrayContents, MappedValue>(
-    arrayToFilterMap: ArrayContents[],
+    arrayToFilterMap: Readonly<ArrayContents[]>,
     callback: (
         arrayEntry: ArrayContents,
         index: number,
-        array: ArrayContents[],
+        array: Readonly<ArrayContents[]>,
     ) => MappedValue | undefined | null,
 ): NonNullable<MappedValue>[] {
     return arrayToFilterMap.reduce(

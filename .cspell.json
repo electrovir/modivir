@@ -1,4 +1,15 @@
 {
+    "ignorePaths": ["./buildResources/"],
     "import": ".cspell-base.json",
-    "words": ["vite", "modivir", "globbing", "browserslistrc", "vitejs"]
+    "words": [
+        "asar",
+        "browserslistrc",
+        "globbing",
+        "killall",
+        "modivir",
+        "precompile",
+        "unallowed",
+        "vite",
+        "vitejs"
+    ]
 }
