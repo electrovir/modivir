@@ -4,8 +4,6 @@ import {PluginOption, UserConfig} from 'vite';
 import {BuildMode, buildMode} from './environment';
 import {packagesDir} from './file-paths';
 
-fffffffff;
-
 export type ViteConfigInputs = {
     /**
      * This should be a path to the package directory. Usually just __dirname should be passed in as
