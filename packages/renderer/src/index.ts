@@ -1,4 +1,4 @@
-const api = (window as any).api;
+import {getApi} from '@packages/common/src/electron-api/api';
 
 // // trigger file prompt
 // api.send('doThing');
@@ -17,5 +17,9 @@ const api = (window as any).api;
 
 const player = new Audio('file:///Users/electrovir/Desktop/audio.m4a');
 player.play();
+
+const api = getApi();
+
+console.log(api.versions);
 
 export {};
