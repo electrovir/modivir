@@ -1,8 +1,7 @@
 import {devServerUrl} from '@packages/common/src/environment';
-import {repoDir} from '@packages/common/src/file-paths';
 import {App, BrowserWindow} from 'electron';
-import {join} from 'path';
 import {URL} from 'url';
+import {prodPreloadScriptIndex} from '../../common/src/file-paths';
 
 export async function startupWindow(electronApp: App, devMode: boolean) {
     let browserWindow: BrowserWindow | undefined;
@@ -48,17 +47,16 @@ async function createOrRestoreWindow(
     }
 
     browserWindow = new BrowserWindow({
-        show: false, // Use 'ready-to-show' event to show window
+        /** Use 'ready-to-show' event to show window */
+        show: false,
         webPreferences: {
-            // sandbox: true,
-            // nodeIntegration: true,
-
+            sandbox: true,
             /**
              * Turn off web security in dev because we're using a web server for the frontend
              * content. However, in prod we MUST have this turned on.
              */
             webSecurity: !devMode,
-            preload: join(repoDir, 'preload', 'dist', 'index.cjs'),
+            preload: prodPreloadScriptIndex,
         },
     });
 

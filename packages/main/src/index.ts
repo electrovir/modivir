@@ -11,7 +11,7 @@ async function setupApp(devMode: boolean) {
     setupIpcCommunication();
     setSecurityRestrictions(electronApp, devMode);
 
-    /** Disable Hardware Acceleration for more power-save */
+    /** Disable Hardware Acceleration for power savings */
     electronApp.disableHardwareAcceleration();
 
     await startupWindow(electronApp, devMode);

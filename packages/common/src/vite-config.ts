@@ -13,27 +13,25 @@ export type ViteConfigInputs = {
     target: keyof typeof versions;
     sourceMap: boolean | 'inline' | 'hidden';
     rollupOptions?: RollupOptions;
-    includeEnvDir?: boolean;
     plugins?: PluginOption[];
+    libraryMode?: boolean;
 };
 
 /** https://vitejs.dev/config */
 export function generateViteConfig({
     rootDir,
     target,
-    rollupOptions = {},
-    includeEnvDir = true,
-    plugins = [],
     sourceMap,
+    rollupOptions = {},
+    plugins = [],
+    libraryMode = true,
 }: ViteConfigInputs): UserConfig {
-    const envDir = includeEnvDir ? {envDir: process.cwd()} : {};
-
     return {
         plugins,
         mode: buildMode,
         base: '',
         root: rootDir,
-        ...envDir,
+        envDir: process.cwd(),
         resolve: {
             alias: {
                 '@packages': packagesDir,
@@ -45,7 +43,7 @@ export function generateViteConfig({
             outDir: 'dist',
             assetsDir: '.',
             minify: buildMode === BuildMode.Prod,
-            lib: {
+            lib: libraryMode && {
                 entry: 'src/index.ts',
                 formats: ['cjs'],
             },
@@ -53,5 +51,6 @@ export function generateViteConfig({
             emptyOutDir: true,
             brotliSize: false,
         },
+        clearScreen: false,
     };
 }

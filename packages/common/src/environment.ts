@@ -21,7 +21,7 @@ function getBuildMode(): BuildMode {
 export const buildMode = getBuildMode();
 
 export const viteDevServerEnvKey = 'VITE_DEV_SERVER_URL';
-export const devServerUrl = process.env[viteDevServerEnvKey];
+export const devServerUrl = process.env[viteDevServerEnvKey]?.replace(/\/$/, '');
 
 export enum Package {
     Main = 'main',

@@ -9,10 +9,12 @@ type Permissions = Parameters<
 type OriginPermissions = Record<string, Set<Permissions> | undefined>;
 
 const devOriginPermissions: OriginPermissions = devServerUrl ? {[devServerUrl]: undefined} : {};
-const devAllowedExternalOrigins = [
-    // allow Vite hot reloads
-    'https://localhost',
-];
+const devAllowedExternalOrigins = devServerUrl
+    ? [
+          // allow Vite hot reloads
+          devServerUrl,
+      ]
+    : [];
 
 export function setSecurityRestrictions(electronApp: App, devMode: boolean) {
     /** List of origins that you allow open INSIDE the application and permissions for each of them. */
@@ -26,6 +28,8 @@ export function setSecurityRestrictions(electronApp: App, devMode: boolean) {
      */
     const allowedExternalOrigins = new Set<string>([...(devMode ? devAllowedExternalOrigins : [])]);
 
+    console.info({allowedOriginPermissions, allowedExternalOrigins});
+
     electronApp.on('web-contents-created', (event, contents) => {
         /**
          * Block navigation to origins not on the allowlist.
@@ -37,7 +41,7 @@ export function setSecurityRestrictions(electronApp: App, devMode: boolean) {
          */
         contents.on('will-navigate', (event, url) => {
             const {origin} = new URL(url);
-            if (origin in allowedOriginPermissions) {
+            if (allowedExternalOrigins.has(origin)) {
                 return;
             }
 
@@ -45,7 +49,7 @@ export function setSecurityRestrictions(electronApp: App, devMode: boolean) {
             event.preventDefault();
 
             if (devMode) {
-                console.warn(`Blocked navigating to a blocked origin: ${origin}`);
+                console.warn(`Blocked navigating to an unallowed origin: ${origin}`);
             }
         });
 

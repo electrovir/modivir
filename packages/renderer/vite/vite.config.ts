@@ -1,38 +1,13 @@
-import {chrome} from '@packages/common/src/electron-vendors.cache.json';
-import {builtinModules} from 'module';
+import {generateViteConfig} from '@packages/common/src/vite-config';
 import {join} from 'path';
-import type {UserConfig} from 'vite';
 import {alwaysReloadPlugin} from './always-reload-plugin';
 
-const PACKAGE_ROOT = join(__dirname, '../');
-
-const viteConfig: UserConfig = {
-    mode: process.env['MODE'] || 'development',
-    root: PACKAGE_ROOT,
-    resolve: {
-        alias: {
-            '/@renderer/src/': join(PACKAGE_ROOT, 'src') + '/',
-        },
-    },
+const viteConfig = generateViteConfig({
+    rootDir: join(__dirname, '../'),
+    target: 'chrome',
+    libraryMode: false,
     plugins: [alwaysReloadPlugin()],
-    base: '',
-    server: {
-        fs: {
-            strict: true,
-        },
-    },
-    build: {
-        sourcemap: true,
-        target: `chrome${chrome}`,
-        outDir: 'dist',
-        assetsDir: '.',
-        rollupOptions: {
-            external: [...builtinModules],
-        },
-        emptyOutDir: true,
-        brotliSize: false,
-    },
-    clearScreen: false,
-};
+    sourceMap: true,
+});
 
 export default viteConfig;
