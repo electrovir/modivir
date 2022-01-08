@@ -1,22 +1,51 @@
+import {
+    ApiFullResponse,
+    ApiRequestDetails,
+    ApiRequestFunction,
+    apiRequestKey,
+    ApiRequestType,
+    getApiResponseEventName,
+} from '@packages/common/src/electron-api/api-request';
+import {getGenericApiValidator} from '@packages/common/src/electron-api/api-validators';
+import {randomString} from 'augment-vir';
+import {ipcRenderer} from 'electron';
 import {expose} from './expose';
 
 expose({
     versions: process.versions,
-});
+    apiRequest: (async (
+        details: ApiRequestDetails<ApiRequestType>,
+    ): Promise<ApiFullResponse<ApiRequestType>> => {
+        async function waitForResponse(): Promise<ApiFullResponse<ApiRequestType>> {
+            return new Promise((resolve) => {
+                ipcRenderer.once(
+                    getApiResponseEventName(details.type, requestId),
+                    (event, data) => {
+                        resolve(data);
+                    },
+                );
+            });
+        }
 
-// contextBridge.exposeInMainWorld('fdkas', {
-//     send: (channel: string, data: any) => {
-//         // whitelist channels
-//         let validChannels = ['doThing'];
-//         if (validChannels.includes(channel)) {
-//             ipcRenderer.send(channel, data);
-//         }
-//     },
-//     on: (channel: string, callback: CallableFunction) => {
-//         let validChannels = ['doThing'];
-//         if (validChannels.includes(channel)) {
-//             // Deliberately strip event as it includes `sender`
-//             ipcRenderer.on(channel, (event, ...args) => callback(...args));
-//         }
-//     },
-// });
+        const data = 'data' in details ? details.data : undefined;
+        const requestId = randomString();
+
+        const responseDataValidator = getGenericApiValidator(details.type).response;
+
+        return new Promise((resolve, reject) => {
+            waitForResponse().then((response) => {
+                if (response.success) {
+                    if (responseDataValidator && !responseDataValidator(response.data)) {
+                        console.error(response.data);
+                        reject(`Response data validation failed.`);
+                    } else {
+                        resolve(response);
+                    }
+                } else {
+                    reject(response.error);
+                }
+            });
+            ipcRenderer.send(apiRequestKey, {type: details.type, data, requestId});
+        });
+    }) as ApiRequestFunction,
+});

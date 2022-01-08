@@ -1,14 +1,14 @@
 import {BuildMode, buildMode} from '@packages/common/src/environment';
 import {app} from 'electron';
-import {checkForUpdates} from './auto-updates';
-import {setupIpcCommunication} from './process-communication';
-import {setSecurityRestrictions} from './security-restrictions';
-import {startupWindow} from './window-management';
+import {checkForUpdates} from './setup/auto-updates';
+import {setSecurityRestrictions} from './setup/security-restrictions';
+import {setupApiHandler} from './setup/setup-api-handler';
+import {startupWindow} from './setup/window-management';
 
 async function setupApp(devMode: boolean) {
     const electronApp = app;
 
-    setupIpcCommunication();
+    setupApiHandler();
     setSecurityRestrictions(electronApp, devMode);
 
     /** Disable Hardware Acceleration for power savings */

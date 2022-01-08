@@ -1,25 +1,20 @@
-import {getApi} from '@packages/common/src/electron-api/api';
+import {ApiRequestType} from '@packages/common/src/electron-api/api-request';
+import {getElectronWindowInterface} from '@packages/common/src/electron-api/electron-window-interface';
 
-// // trigger file prompt
-// api.send('doThing');
-
-// // handle response
-// api.on('doThing', (base64: string) => {
-//     if (!base64) {
-//         return;
-//     }
-//     const src = `data:image/jpg;base64,${base64}`;
-//     const image = document.querySelector('img');
-//     if (image) {
-//         image.src = src;
-//     }
-// });
-
-const player = new Audio('file:///Users/electrovir/Desktop/audio.m4a');
+const player = new Audio(`file:///Users/electrovir/Desktop/audio2.m4a`);
 player.play();
+player.loop = true;
 
-const api = getApi();
+const api = getElectronWindowInterface();
 
 console.log(api.versions);
 
+async function testApi() {
+    const response = await api.apiRequest({type: ApiRequestType.GetPreferences});
+
+    console.log(`received data from backend:`);
+    console.log(response);
+}
+
+testApi();
 export {};

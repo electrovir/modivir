@@ -1,7 +1,7 @@
 import {devServerUrl} from '@packages/common/src/environment';
+import {prodPreloadScriptIndex} from '@packages/common/src/file-paths';
 import {App, BrowserWindow} from 'electron';
 import {URL} from 'url';
-import {prodPreloadScriptIndex} from '../../common/src/file-paths';
 
 export async function startupWindow(electronApp: App, devMode: boolean) {
     let browserWindow: BrowserWindow | undefined;

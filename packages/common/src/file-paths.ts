@@ -1,5 +1,6 @@
+import {homedir} from 'os';
 import {dirname, join} from 'path';
-import {Package} from './environment';
+import {AppName, Package} from './environment';
 
 /** This still generates the correct URL when the app is deployed. */
 export const repoDir = dirname(dirname(dirname(__dirname)));
@@ -14,3 +15,5 @@ export const packageConfigPaths: Record<Package, string> = {
 };
 
 export const prodPreloadScriptIndex = join(packagesDir, Package.Preload, 'dist', 'index.cjs');
+
+export const libraryConfig = join(homedir(), '.config', AppName);

@@ -28,3 +28,5 @@ export enum Package {
     Preload = 'preload',
     Renderer = 'renderer',
 }
+
+export const AppName = 'modivir' as const;

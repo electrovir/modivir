@@ -1,9 +1,9 @@
+import {asyncFilter} from '@packages/common/src/augments/array';
 import {packagesDir} from '@packages/common/src/file-paths';
 import {printShellCommandOutput, runShellCommand} from 'augment-vir/dist/node';
 import chalk from 'chalk';
 import {lstat, readdir} from 'fs/promises';
 import {join} from 'path';
-import {asyncFilter} from '../../common/src/augments/array';
 
 async function typeCheckPackage(path: string): Promise<boolean> {
     const shellCommand = `tsc --noEmit -p ${join(path, 'tsconfig.json')}`;
