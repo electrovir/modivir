@@ -3,6 +3,7 @@ import {
     ApiRequestType,
     ApiResponseData,
 } from '@packages/common/src/electron-api/api-request';
+import {selectFiles} from './dialogs';
 import {readPreferences, savePreferences} from './preferences';
 
 export type ApiHandlerFunction<RequestTypeGeneric extends ApiRequestType> = (
@@ -14,6 +15,7 @@ const apiHandlers: {
 } = {
     [ApiRequestType.SavePreferences]: savePreferences,
     [ApiRequestType.GetPreferences]: readPreferences,
+    [ApiRequestType.SelectFiles]: selectFiles,
 };
 
 export function getGenericApiHandler(

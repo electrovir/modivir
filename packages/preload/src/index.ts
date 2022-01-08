@@ -37,7 +37,7 @@ expose({
                 if (response.success) {
                     if (responseDataValidator && !responseDataValidator(response.data)) {
                         console.error(response.data);
-                        reject(`Response data validation failed.`);
+                        reject(`Response data validation for ${details.type} failed.`);
                     } else {
                         resolve(response);
                     }

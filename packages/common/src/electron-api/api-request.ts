@@ -5,6 +5,7 @@ export const apiRequestKey = 'api-request-key' as const;
 export enum ApiRequestType {
     GetPreferences = 'get-preferences',
     SavePreferences = 'save-preferences',
+    SelectFiles = 'select-files',
 }
 
 export type ApiResponseEventName = `${typeof apiRequestKey}:${ApiRequestType}:${string}`;
@@ -19,11 +20,13 @@ export function getApiResponseEventName(
 export type ApiRequestData = {
     [ApiRequestType.GetPreferences]: undefined;
     [ApiRequestType.SavePreferences]: UserPreferences;
+    [ApiRequestType.SelectFiles]: undefined;
 };
 
 export type ApiResponseData = {
     [ApiRequestType.GetPreferences]: UserPreferences | undefined;
     [ApiRequestType.SavePreferences]: boolean;
+    [ApiRequestType.SelectFiles]: string[] | undefined;
 };
 
 export type ApiRequestDetails<RequestTypeGeneric extends ApiRequestType> = {

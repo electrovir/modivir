@@ -17,6 +17,12 @@ describe(matchesShallowObjectSignature.name, () => {
         expect(matchesShallowObjectSignature(testObject, comparisonObject)).toBe(true);
     });
 
+    it('should work on arrays', () => {
+        const testObject = [1, 2, 3, 'hello', 'there'];
+        const comparisonObject = [54, 42, 10, 'what', 'ever'];
+        expect(matchesShallowObjectSignature(testObject, comparisonObject)).toBe(true);
+    });
+
     it('should pass on when the test object property values are sub classes of the comparison', () => {
         class FakeDate extends Date {}
 
