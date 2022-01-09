@@ -4,17 +4,10 @@ describe(isValidUserPreferences.name, () => {
     it('should work on valid user preferences objects', () => {
         const validUserPreferences: UserPreferences[] = [
             {
-                songs: [
-                    {
-                        filePath: 'anything goes here',
-                    },
-                    {
-                        filePath: '',
-                    },
-                ],
+                libraryDirectoryPath: 'some words go here',
             },
             {
-                songs: [],
+                libraryDirectoryPath: '',
             },
         ];
 

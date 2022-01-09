@@ -56,9 +56,9 @@ async function typeCheckAllPackages(): Promise<boolean> {
 
         console.info(`Package type checks:`);
         console.info(resultString);
-        console.error(chalk.red.bold(`\nType checks failed.`));
+        console.error(chalk.red.bold(`\ntype checks failed.`));
     } else {
-        console.info(chalk.green.bold('Type checks succeeded.'));
+        console.info(chalk.green.bold('type checks succeeded.'));
     }
 
     return !failed;

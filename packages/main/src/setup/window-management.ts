@@ -74,12 +74,9 @@ async function createOrRestoreWindow(
         }
     });
 
-    /**
-     * URL for main window. Vite dev server for development. `file://../renderer/index.html` for
-     * production and test
-     */
+    /** URL for main window. Vite dev server for development. */
     const pageUrl =
-        devMode && devServerUrl !== undefined
+        devMode && !!devServerUrl
             ? devServerUrl
             : new URL('../renderer/dist/index.html', 'file://' + __dirname).toString();
 

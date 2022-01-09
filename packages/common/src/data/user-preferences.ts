@@ -1,18 +1,13 @@
 import {matchesShallowObjectSignature} from './object-validator';
-import {isValidSong, Song} from './song';
 
 export type UserPreferences = {
-    songs: Song[];
+    libraryDirectoryPath: string;
 };
 
-const defaultUserPreferences = {songs: []};
+const emptyUserPreferences: UserPreferences = {libraryDirectoryPath: ''} as const;
 
 export function isValidUserPreferences(input: any): input is UserPreferences {
-    if (!matchesShallowObjectSignature(input, defaultUserPreferences)) {
-        return false;
-    }
-
-    if (!input.songs.every((song) => isValidSong(song))) {
+    if (!matchesShallowObjectSignature(input, emptyUserPreferences)) {
         return false;
     }
 

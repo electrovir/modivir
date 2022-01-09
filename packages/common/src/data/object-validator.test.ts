@@ -23,6 +23,23 @@ describe(matchesShallowObjectSignature.name, () => {
         expect(matchesShallowObjectSignature(testObject, comparisonObject)).toBe(true);
     });
 
+    it('should fail when the test object has more keys than the comparison object', () => {
+        const testObject = {
+            a: 'hello',
+            b: 'there',
+            c: 4,
+            d: 54,
+            what: ['it does not matter what is in here because', 'it only does shallow checking'],
+        };
+        const comparisonObject = {
+            a: 'what',
+            b: 'ever',
+            c: 2,
+            what: [],
+        };
+        expect(matchesShallowObjectSignature(testObject, comparisonObject)).toBe(false);
+    });
+
     it('should pass on when the test object property values are sub classes of the comparison', () => {
         class FakeDate extends Date {}
 

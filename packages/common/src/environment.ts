@@ -19,14 +19,17 @@ function getBuildMode(): BuildMode {
 }
 
 export const buildMode = getBuildMode();
+export const isDevMode = buildMode === BuildMode.Dev;
 
 export const viteDevServerEnvKey = 'VITE_DEV_SERVER_URL';
 export const devServerUrl = process.env[viteDevServerEnvKey]?.replace(/\/$/, '');
 
 export enum Package {
+    Common = 'common',
     Main = 'main',
     Preload = 'preload',
     Renderer = 'renderer',
+    Scripts = 'scripts',
 }
 
 export const AppName = 'modivir' as const;

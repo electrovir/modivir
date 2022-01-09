@@ -3,10 +3,12 @@ import {
     ApiRequestDetails,
     ApiRequestFunction,
     apiRequestKey,
-    ApiRequestType,
-    getApiResponseEventName,
 } from '@packages/common/src/electron-api/api-request';
-import {getGenericApiValidator} from '@packages/common/src/electron-api/api-validators';
+import {
+    ApiRequestType,
+    getGenericApiValidator,
+} from '@packages/common/src/electron-api/api-request-type';
+import {getApiResponseEventName} from '@packages/common/src/electron-api/api-response';
 import {randomString} from 'augment-vir';
 import {ipcRenderer} from 'electron';
 import {expose} from './expose';

@@ -1,16 +1,19 @@
+import {extractMessage} from '@packages/common/src/augments/error';
 import {
     ApiFullResponse,
     ApiRequestDetails,
     apiRequestKey,
-    ApiRequestType,
-    getApiResponseEventName,
 } from '@packages/common/src/electron-api/api-request';
-import {getGenericApiValidator} from '@packages/common/src/electron-api/api-validators';
+import {
+    ApiRequestType,
+    getGenericApiValidator,
+} from '@packages/common/src/electron-api/api-request-type';
+import {getApiResponseEventName} from '@packages/common/src/electron-api/api-response';
 import {isEnumValue} from 'augment-vir';
-import {ipcMain} from 'electron';
+import {App, ipcMain} from 'electron';
 import {getGenericApiHandler} from '../api/api-handlers';
 
-export function setupApiHandler() {
+export function setupApiHandler(devMode: boolean, electronApp: App) {
     ipcMain.on(apiRequestKey, async (event, requestDetails: ApiRequestDetails<ApiRequestType>) => {
         function sendReply(response: ApiFullResponse<ApiRequestType>) {
             const responseId = getApiResponseEventName(
@@ -22,6 +25,9 @@ export function setupApiHandler() {
 
         try {
             const requestType = requestDetails.type;
+            if (devMode) {
+                console.info('Receiving request:', requestDetails);
+            }
 
             if (!isEnumValue(requestType, ApiRequestType)) {
                 throw new Error(`Invalid request type "${requestType}"`);
@@ -39,8 +45,22 @@ export function setupApiHandler() {
             }
 
             const handler = getGenericApiHandler(requestType);
-            const response = await handler(requestDetails.data);
-
+            let response;
+            try {
+                response = await handler(requestDetails.data, electronApp);
+                if (devMode) {
+                    console.info(
+                        `Responding to request ${requestDetails.type} ${requestDetails.requestId}:`,
+                        response,
+                    );
+                }
+            } catch (error) {
+                throw new Error(
+                    `${requestDetails.type} ${
+                        requestDetails.requestId
+                    } handler failed: ${extractMessage(error)}`,
+                );
+            }
             sendReply({
                 success: true,
                 error: undefined,
@@ -49,7 +69,10 @@ export function setupApiHandler() {
             return true;
         } catch (error) {
             const errorString = error instanceof Error ? error.message : String(error);
-
+            console.error(
+                `ERROR for request ${requestDetails.type} ${requestDetails.requestId}:`,
+                errorString,
+            );
             sendReply({
                 success: false,
                 error: errorString,

@@ -1,7 +1,11 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
-module.exports = {
+import {InitialOptionsTsJest} from 'ts-jest/dist/types';
+
+const config: InitialOptionsTsJest = {
     preset: 'ts-jest',
     testEnvironment: 'node',
+    verbose: false,
+    silent: false,
+    setupFilesAfterEnv: ['./jest.setup.ts'],
     globals: {
         'ts-jest': {
             diagnostics: {
@@ -11,3 +15,5 @@ module.exports = {
         },
     },
 };
+
+export default config;

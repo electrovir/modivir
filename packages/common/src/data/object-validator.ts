@@ -14,6 +14,10 @@ export function matchesShallowObjectSignature<T extends object>(
         return false;
     }
 
+    if (Object.keys(testing).length !== Object.keys(defaultComparison).length) {
+        return false;
+    }
+
     return getObjectTypedKeys(defaultComparison).every((requiredKey) => {
         if (!hasProperty(testing, requiredKey)) {
             return false;

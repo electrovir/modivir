@@ -1,33 +1,6 @@
-import {UserPreferences} from '../data/user-preferences';
+import {ApiRequestData, ApiRequestType, ApiResponseData} from './api-request-type';
 
 export const apiRequestKey = 'api-request-key' as const;
-
-export enum ApiRequestType {
-    GetPreferences = 'get-preferences',
-    SavePreferences = 'save-preferences',
-    SelectFiles = 'select-files',
-}
-
-export type ApiResponseEventName = `${typeof apiRequestKey}:${ApiRequestType}:${string}`;
-
-export function getApiResponseEventName(
-    requestType: ApiRequestType,
-    requestId: string,
-): ApiResponseEventName {
-    return `${apiRequestKey}:${requestType}:${requestId}`;
-}
-
-export type ApiRequestData = {
-    [ApiRequestType.GetPreferences]: undefined;
-    [ApiRequestType.SavePreferences]: UserPreferences;
-    [ApiRequestType.SelectFiles]: undefined;
-};
-
-export type ApiResponseData = {
-    [ApiRequestType.GetPreferences]: UserPreferences | undefined;
-    [ApiRequestType.SavePreferences]: boolean;
-    [ApiRequestType.SelectFiles]: string[] | undefined;
-};
 
 export type ApiRequestDetails<RequestTypeGeneric extends ApiRequestType> = {
     type: RequestTypeGeneric;

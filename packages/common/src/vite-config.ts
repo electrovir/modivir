@@ -1,7 +1,7 @@
 import * as versions from '@packages/common/src/electron-vendors.cache.json';
 import {RollupOptions} from 'rollup';
 import {PluginOption, UserConfig} from 'vite';
-import {BuildMode, buildMode} from './environment';
+import {buildMode, isDevMode} from './environment';
 import {packagesDir} from './file-paths';
 
 export type ViteConfigInputs = {
@@ -42,7 +42,7 @@ export function generateViteConfig({
             target: `${target}${versions[target]}`,
             outDir: 'dist',
             assetsDir: '.',
-            minify: buildMode === BuildMode.Prod,
+            minify: !isDevMode,
             lib: libraryMode && {
                 entry: 'src/index.ts',
                 formats: ['cjs'],
