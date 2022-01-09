@@ -3,7 +3,7 @@ import {extractMessage} from '@packages/common/src/augments/error';
 import {Package} from '@packages/common/src/environment';
 import {packagesDir} from '@packages/common/src/file-paths';
 import {getEnumTypedValues, safeMatch} from 'augment-vir';
-import {runShellCommand} from 'augment-vir/dist/node';
+import {interpolationSafeWindowsPath, runShellCommand} from 'augment-vir/dist/node';
 import chalk from 'chalk';
 import {existsSync} from 'fs';
 
@@ -15,7 +15,9 @@ async function cleanTsGrep(searchFor: string): Promise<string[]> {
      *
      * -n = include line number
      */
-    const command = `grep -irn --include \\*.ts "${searchFor}" ${packagesDir}`;
+    const command = `grep -irn --include \\*.ts "${searchFor}" ${interpolationSafeWindowsPath(
+        packagesDir,
+    )}`;
     const output = await runShellCommand(command);
 
     if (output.exitCode === 1) {

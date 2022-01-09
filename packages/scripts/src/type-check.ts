@@ -1,12 +1,18 @@
 import {asyncFilter} from '@packages/common/src/augments/array';
 import {packagesDir} from '@packages/common/src/file-paths';
-import {printShellCommandOutput, runShellCommand} from 'augment-vir/dist/node';
+import {
+    interpolationSafeWindowsPath,
+    printShellCommandOutput,
+    runShellCommand,
+} from 'augment-vir/dist/node';
 import chalk from 'chalk';
 import {lstat, readdir} from 'fs/promises';
 import {join} from 'path';
 
 async function typeCheckPackage(path: string): Promise<boolean> {
-    const shellCommand = `tsc --noEmit -p ${join(path, 'tsconfig.json')}`;
+    const shellCommand = `tsc --noEmit -p ${interpolationSafeWindowsPath(
+        join(path, 'tsconfig.json'),
+    )}`;
 
     const shellOutput = await runShellCommand(shellCommand);
 
