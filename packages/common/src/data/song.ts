@@ -2,6 +2,8 @@ import {getObjectTypedKeys} from 'augment-vir';
 import {isValidArray, typeofValidators} from '../electron-api/api-validation';
 import {matchesShallowObjectSignature} from './object-validator';
 
+export type SongRating = 0 | 1 | 2 | 3 | 4 | 5 | undefined;
+
 export type Song = {
     filePath: string;
     index: number;
@@ -11,6 +13,9 @@ export type Song = {
     artists: Readonly<string[]>;
     albums: Readonly<string[]>;
     genres: Readonly<string[]>;
+
+    rating?: SongRating;
+    lyrics?: string | undefined;
 };
 
 export const emptySong: Song = {
@@ -25,7 +30,7 @@ export const emptySong: Song = {
 } as const;
 
 export function isValidSong(input: any): input is Song {
-    if (!matchesShallowObjectSignature(input, emptySong)) {
+    if (!matchesShallowObjectSignature(input, emptySong, true)) {
         return false;
     }
 

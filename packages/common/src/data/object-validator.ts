@@ -9,12 +9,13 @@ import {hasProperty, isObject} from '../augments/object';
 export function matchesShallowObjectSignature<T extends object>(
     testing: any,
     defaultComparison: T,
+    allowExtraKeys = false,
 ): testing is T {
     if (!isObject(testing)) {
         return false;
     }
 
-    if (Object.keys(testing).length !== Object.keys(defaultComparison).length) {
+    if (!allowExtraKeys && Object.keys(testing).length !== Object.keys(defaultComparison).length) {
         return false;
     }
 

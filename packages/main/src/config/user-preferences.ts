@@ -2,8 +2,8 @@ import {extractMessage} from '@packages/common/src/augments/error';
 import {isValidUserPreferences, UserPreferences} from '@packages/common/src/data/user-preferences';
 import {existsSync} from 'fs';
 import {ensureDir} from 'fs-extra';
-import {readFile, writeFile} from 'fs/promises';
 import {dirname, join} from 'path';
+import {readPackedJson, writePackedJson} from '../augments/file-system';
 import {CanGetPath, getConfigDir, getPreferencesFilePath} from './config-path';
 
 async function getDefaultUserPreferences(appPaths: CanGetPath): Promise<UserPreferences> {
@@ -22,8 +22,7 @@ export async function readPreferences(appPaths: CanGetPath): Promise<UserPrefere
 
     if (existsSync(preferencesPath)) {
         try {
-            const libraryContents = (await readFile(preferencesPath)).toString();
-            const parsedLibrary = JSON.parse(libraryContents);
+            const parsedLibrary = await readPackedJson(preferencesPath);
 
             if (!isValidUserPreferences(parsedLibrary)) {
                 throw new Error(`User preferences file contents failed validation.`);
@@ -50,11 +49,9 @@ export async function savePreferences(
     const preferencesPath = getPreferencesFilePath(appPaths);
     await ensureDir(dirname(preferencesPath));
 
-    const stringified = JSON.stringify(input, null, 4);
+    await writePackedJson(preferencesPath, input);
 
-    await writeFile(preferencesPath, stringified);
-
-    // check that valid JSON was written
+    // check that valid preferences was written
     // todo: deep equality check to make sure written data was identical to data that was intended to be written
     const writtenPreferences = await readPreferences(appPaths);
 

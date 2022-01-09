@@ -1,6 +1,6 @@
 import {LibraryWriteResult} from '@packages/common/src/data/library-write-result';
 import {Song} from '@packages/common/src/data/song';
-import {writeFile} from 'fs/promises';
+import {writePackedJson} from '../../augments/file-system';
 import {CanGetPath} from '../config-path';
 import {getSongsPath} from './library-files';
 import {readSongs} from './library-read';
@@ -54,7 +54,7 @@ export async function writeSongs(
         }
     });
 
-    await writeFile(await getSongsPath(appPaths), JSON.stringify(currentLibraryContents, null, 4));
+    await writePackedJson(await getSongsPath(appPaths), currentLibraryContents);
 
     return writeResults;
 }

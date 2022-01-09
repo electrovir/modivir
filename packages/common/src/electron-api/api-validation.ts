@@ -2,7 +2,7 @@ import {getObjectTypedKeys} from 'augment-vir';
 import {TypeofReturnToTypeMapping, TypeofReturnValue} from '../augments/type';
 
 export function isValidArray<SpecificType>(
-    testArray: any[],
+    testArray: unknown,
     elementValidator: (element: any) => element is SpecificType,
 ): testArray is SpecificType[] {
     if (!Array.isArray(testArray)) {
@@ -17,6 +17,15 @@ export function createArrayValidator<SpecificType>(
 ) {
     return (testArray: any[]): testArray is SpecificType[] =>
         isValidArray(testArray, elementValidator);
+}
+
+export function assertIsValidArray<SpecificType>(
+    testArray: unknown,
+    elementValidator: (element: any) => element is SpecificType,
+): asserts testArray is SpecificType[] {
+    if (!isValidArray(testArray, elementValidator)) {
+        throw new Error(`Invalid array given: ${testArray}`);
+    }
 }
 
 function typeofValidator<SpecificType extends TypeofReturnValue>(

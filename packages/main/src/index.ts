@@ -1,6 +1,5 @@
 import {isDevMode} from '@packages/common/src/environment';
 import {app} from 'electron';
-import {initLibrary} from './config/library/library-init';
 import {checkForUpdates} from './setup/auto-updates';
 import {setSecurityRestrictions} from './setup/security-restrictions';
 import {setupApiHandler} from './setup/setup-api-handler';
@@ -13,7 +12,6 @@ async function setupApp(devMode: boolean) {
 
     setupApiHandler(devMode, electronApp);
     setSecurityRestrictions(electronApp, devMode);
-    await initLibrary(electronApp);
 
     await startupWindow(electronApp, devMode);
     await checkForUpdates(devMode);
