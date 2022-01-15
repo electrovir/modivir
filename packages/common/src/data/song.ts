@@ -4,12 +4,20 @@ import {matchesShallowObjectSignature} from './object-validator';
 
 export type SongRating = 0 | 1 | 2 | 3 | 4 | 5 | undefined;
 
-export type Song = {
-    filePath: string;
-    index: number;
+export type SongFileStats = {
     lengthMs: number;
     fileSizeBytes: number;
     format: string;
+    lossless: boolean;
+    sampleRate: number;
+    channelCount: number;
+    codec: string;
+};
+
+export type Song = SongFileStats & {
+    index: number;
+    filePath: string;
+
     artists: Readonly<string[]>;
     albums: Readonly<string[]>;
     genres: Readonly<string[]>;
@@ -18,19 +26,35 @@ export type Song = {
     lyrics?: string | undefined;
 };
 
+export const emptySongFileStats: SongFileStats = {
+    lengthMs: -1,
+    fileSizeBytes: -1,
+    format: 'unknown',
+    channelCount: -1,
+    lossless: false,
+    sampleRate: -1,
+    codec: 'unknown',
+};
+
 export const emptySong: Song = {
     filePath: '',
-    fileSizeBytes: 0,
-    format: '',
     index: -1,
-    lengthMs: 0,
     artists: [''],
     albums: [''],
     genres: [''],
+    ...emptySongFileStats,
 } as const;
 
+export function isValidSongFileStats(input: any): input is SongFileStats {
+    if (!matchesShallowObjectSignature(input, emptySongFileStats, false)) {
+        return false;
+    }
+
+    return true;
+}
+
 export function isValidSong(input: any): input is Song {
-    if (!matchesShallowObjectSignature(input, emptySong, true)) {
+    if (!matchesShallowObjectSignature(input, emptySong)) {
         return false;
     }
 

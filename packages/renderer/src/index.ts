@@ -1,5 +1,6 @@
 import {emptySong, Song} from '@packages/common/src/data/song';
 import {ApiRequestType} from '@packages/common/src/electron-api/api-request-type';
+import {ApiFullResponse} from '@packages/common/src/electron-api/api-response';
 import {getElectronWindowInterface} from '@packages/common/src/electron-api/electron-window-interface';
 
 const api = getElectronWindowInterface();
@@ -27,35 +28,49 @@ function playRandomSong(songs: Song[]) {
 
 console.log(api.versions);
 
-async function testApi() {
-    const response = await api.apiRequest({type: ApiRequestType.ReadLibrary});
+async function populateLibrary(): Promise<ApiFullResponse<ApiRequestType.ReadLibrary>> {
+    const files = await api.apiRequest({type: ApiRequestType.SelectFiles});
+    if (files.data) {
+        console.log(files.data);
+        const newSongs: Song[] = files.data.map((filePath) => ({
+            ...emptySong,
+            filePath,
+        }));
+        const saveSongs = await api.apiRequest({
+            type: ApiRequestType.EditSongs,
+            data: newSongs,
+        });
 
-    console.log(`received data from backend:`);
-    console.log(response.data);
-    if (response.data && response.data.length) {
-        playRandomSong(response.data);
-    } else {
-        const files = await api.apiRequest({type: ApiRequestType.SelectFiles});
-        if (files.data) {
-            console.log(files.data);
-            const newSongs: Song[] = files.data.map((filePath) => ({
-                ...emptySong,
-                filePath,
-            }));
-            const saveSongs = await api.apiRequest({
-                type: ApiRequestType.EditSongs,
-                data: newSongs,
-            });
-
-            console.log(saveSongs);
-            playRandomSong(newSongs);
-        } else {
-            console.log('got no files');
-        }
+        console.log({saveSongs});
     }
+    return await api.apiRequest({type: ApiRequestType.ReadLibrary});
+}
 
-    const initLibraryResult = await api.apiRequest({type: ApiRequestType.GetConfigDir});
-    console.log('library init', initLibraryResult);
+async function readLibrary(alreadyTried = false): Promise<Song[]> {
+    const response =
+        (await api.apiRequest({type: ApiRequestType.ReadLibrary})) ?? (await populateLibrary());
+
+    if (response.data && response.data.length) {
+        return response.data;
+    } else if (!alreadyTried) {
+        await populateLibrary();
+        return readLibrary(true);
+    } else {
+        throw new Error(`Failed to populate library.`);
+    }
+}
+
+async function testApi() {
+    try {
+        const songs = await readLibrary();
+        console.log({songs});
+        playRandomSong(songs);
+
+        const configDir = await api.apiRequest({type: ApiRequestType.GetConfigDir});
+        console.log('config dir', configDir);
+    } catch (error) {
+        console.error(error);
+    }
     const showPathButton = document.createElement('button');
 
     const configPath = await api.apiRequest({type: ApiRequestType.GetConfigDir});

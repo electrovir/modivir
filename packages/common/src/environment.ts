@@ -26,6 +26,7 @@ export const devServerUrl = process.env[viteDevServerEnvKey]?.replace(/\/$/, '')
 
 export enum Package {
     Common = 'common',
+    Jest = 'jest',
     Main = 'main',
     Preload = 'preload',
     Renderer = 'renderer',

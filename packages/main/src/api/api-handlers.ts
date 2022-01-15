@@ -25,7 +25,14 @@ const apiHandlers: {
     [ApiRequestType.GetConfigDir]: (input, app) => getConfigDir(app),
     [ApiRequestType.ViewFilePath]: (input) => viewPath(input),
     [ApiRequestType.EditSongs]: writeSongs,
-    [ApiRequestType.ReadLibrary]: (input, app) => readSongs(app),
+    [ApiRequestType.ReadLibrary]: (input, app) => {
+        try {
+            return readSongs(app);
+        } catch (error) {
+            console.error(error);
+            return undefined;
+        }
+    },
 };
 
 export function getGenericApiHandler(

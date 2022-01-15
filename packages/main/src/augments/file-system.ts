@@ -32,6 +32,9 @@ export async function readPackedJson(filePath: string): Promise<unknown> {
     }
 
     const fileContents = (await readFile(filePath)).toString();
+    if (!fileContents.trim()) {
+        return undefined;
+    }
     try {
         const unpackedContents = unpack(fileContents) as unknown;
         return unpackedContents;

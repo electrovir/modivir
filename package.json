@@ -21,17 +21,18 @@
         "check-imports": "ts-node -P ./packages/scripts/tsconfig.json -r tsconfig-paths/register ./packages/scripts/src/check-imports.ts",
         "precompile": "cross-env MODE=production npm run build",
         "compile": "killall modivir; rm -rf dist && electron-builder build --config .electron-builder.config.js --dir --config.asar=false && open -n ./dist/mac-arm64/modivir.app",
-        "dev": "ts-node -P ./packages/scripts/tsconfig.json -r tsconfig-paths/register ./packages/scripts/src/watch.ts",
         "format": "virmator format write",
         "frontend": "npm install && cd frontend && vite --force --config ./vite/config.ts",
         "spellcheck": "virmator spellcheck",
-        "test": "jest ./packages",
+        "start": "ts-node -P ./packages/scripts/tsconfig.json -r tsconfig-paths/register ./packages/scripts/src/watch.ts",
+        "test": "jest --config ./packages/jest/jest.config.ts",
         "test:full": "npm run type-check && npm test && npm run spellcheck && virmator format check && npm run check-imports",
         "type-check": "ts-node -P ./packages/scripts/tsconfig.json -r tsconfig-paths/register ./packages/scripts/src/type-check.ts"
     },
     "dependencies": {
         "augment-vir": "^1.4.3",
-        "electron-updater": "4.6.5"
+        "electron-updater": "4.6.5",
+        "music-metadata": "^7.11.6"
     },
     "devDependencies": {
         "@babel/preset-typescript": "^7.16.7",

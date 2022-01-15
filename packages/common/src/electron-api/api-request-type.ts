@@ -1,23 +1,41 @@
+import {OpenDialogProperty} from '@packages/common/src/electron-api/electron-types';
 import {LibraryWriteResult, validateLibraryWriteResult} from '../data/library-write-result';
 import {isValidSong, Song} from '../data/song';
 import {isValidUserPreferences, UserPreferences} from '../data/user-preferences';
-import {createArrayValidator, isValidArray, typeofValidators} from './api-validation';
+import {
+    createAllowUndefinedValidator,
+    createArrayValidator,
+    createEnumValidator,
+    typeofValidators,
+} from './api-validation';
+
+export const apiRequestKey = 'api-request-key' as const;
 
 export enum ApiRequestType {
+    /** Get the current user preferences saved on disk. */
     GetPreferences = 'get-preferences',
+    /** Overwrite user preferences */
     SavePreferences = 'save-preferences',
+    /** Trigger a native file selection popup. */
     SelectFiles = 'select-files',
+    /** Get the directory of the modivir config directory. */
     GetConfigDir = 'get-config-dir',
+    /** Open a given file path in the system's default file browser. */
     ViewFilePath = 'view-file-path',
-    /** Set index to -1 in each new song to add new songs. */
+    /**
+     * Edit songs already saved into the library or add new songs.
+     *
+     * Set index to -1 in each new song to add new songs.
+     */
     EditSongs = 'edit-songs',
+    /** Read the whole library at once! */
     ReadLibrary = 'read-library',
 }
 
 export type ApiRequestData = {
     [ApiRequestType.GetPreferences]: undefined;
     [ApiRequestType.SavePreferences]: UserPreferences;
-    [ApiRequestType.SelectFiles]: undefined;
+    [ApiRequestType.SelectFiles]: OpenDialogProperty[] | undefined;
     [ApiRequestType.GetConfigDir]: undefined;
     [ApiRequestType.ViewFilePath]: string;
     [ApiRequestType.EditSongs]: Song[];
@@ -29,9 +47,9 @@ export type ApiResponseData = {
     [ApiRequestType.SavePreferences]: boolean;
     [ApiRequestType.SelectFiles]: string[] | undefined;
     [ApiRequestType.GetConfigDir]: string;
-    [ApiRequestType.ViewFilePath]: undefined | void;
+    [ApiRequestType.ViewFilePath]: void;
     [ApiRequestType.EditSongs]: LibraryWriteResult[];
-    [ApiRequestType.ReadLibrary]: Song[];
+    [ApiRequestType.ReadLibrary]: Song[] | undefined;
 };
 
 export const apiValidators: {
@@ -48,10 +66,10 @@ export const apiValidators: {
         response: typeofValidators.boolean,
     },
     [ApiRequestType.SelectFiles]: {
-        request: undefined,
-        response: (data): data is string[] | undefined => {
-            return data === undefined || isValidArray(data, typeofValidators.string);
-        },
+        request: createAllowUndefinedValidator(
+            createArrayValidator(createEnumValidator(OpenDialogProperty)),
+        ),
+        response: createAllowUndefinedValidator(createArrayValidator(typeofValidators.string)),
     },
     [ApiRequestType.GetConfigDir]: {
         request: undefined,

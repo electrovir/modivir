@@ -1,8 +1,15 @@
+import {OpenDialogProperty} from '@packages/common/src/electron-api/electron-types';
 import {dialog} from 'electron';
 
-export async function selectFiles(): Promise<undefined | string[]> {
+export async function selectFiles(
+    inputProperties: OpenDialogProperty[] = [
+        OpenDialogProperty.multiSelections,
+        OpenDialogProperty.openFile,
+        OpenDialogProperty.openDirectory,
+    ],
+): Promise<undefined | string[]> {
     const dialogResult = await dialog.showOpenDialog({
-        properties: ['multiSelections', 'openFile', 'openDirectory'],
+        properties: inputProperties,
     });
     if (dialogResult.canceled) {
         return undefined;

@@ -1,14 +1,13 @@
+import {ApiRequestDetails, ApiRequestFunction} from '@packages/common/src/electron-api/api-request';
 import {
-    ApiFullResponse,
-    ApiRequestDetails,
-    ApiRequestFunction,
     apiRequestKey,
-} from '@packages/common/src/electron-api/api-request';
-import {
     ApiRequestType,
     getGenericApiValidator,
 } from '@packages/common/src/electron-api/api-request-type';
-import {getApiResponseEventName} from '@packages/common/src/electron-api/api-response';
+import {
+    ApiFullResponse,
+    getApiResponseEventName,
+} from '@packages/common/src/electron-api/api-response';
 import {randomString} from 'augment-vir';
 import {ipcRenderer} from 'electron';
 import {expose} from './expose';
@@ -39,10 +38,9 @@ expose({
                 if (response.success) {
                     if (responseDataValidator && !responseDataValidator(response.data)) {
                         console.error(response.data);
-                        reject(`Response data validation for ${details.type} failed.`);
-                    } else {
-                        resolve(response);
+                        console.error(`Response data validation for ${details.type} failed.`);
                     }
+                    resolve(response);
                 } else {
                     reject(response.error);
                 }

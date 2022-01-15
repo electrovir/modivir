@@ -1,4 +1,4 @@
-import {getObjectTypedKeys} from 'augment-vir';
+import {getObjectTypedKeys, isEnumValue} from 'augment-vir';
 import {TypeofReturnToTypeMapping, TypeofReturnValue} from '../augments/type';
 
 export function isValidArray<SpecificType>(
@@ -10,6 +10,26 @@ export function isValidArray<SpecificType>(
     }
 
     return testArray.every((entry) => elementValidator(entry));
+}
+
+export function createEnumValidator<SpecificEnum extends object>(
+    enumToCheck: SpecificEnum,
+): (input: any) => input is SpecificEnum[keyof SpecificEnum] {
+    return (input: any): input is SpecificEnum[keyof SpecificEnum] => {
+        return isEnumValue(input, enumToCheck);
+    };
+}
+
+export function createAllowUndefinedValidator<SpecificType>(
+    validator: (input: any) => input is SpecificType,
+): (input: any) => input is SpecificType | undefined {
+    return (input: any): input is SpecificType | undefined => {
+        if (input === undefined) {
+            return true;
+        } else {
+            return validator(input);
+        }
+    };
 }
 
 export function createArrayValidator<SpecificType>(

@@ -1,4 +1,4 @@
-import {asyncFilter, filterMap} from './array';
+import {asyncFilter, asyncInOrderMap, filterMap} from './array';
 
 describe(asyncFilter.name, () => {
     it('works on async filters', async () => {
@@ -52,5 +52,16 @@ describe(filterMap.name, () => {
         });
 
         expect(filtered).toEqual(originalArray);
+    });
+});
+
+describe(asyncInOrderMap.name, () => {
+    it('should map and preserve order', async () => {
+        const inputArray = [1, 2, 3, 4, 5];
+        const outputArray = await asyncInOrderMap(inputArray, (element) => {
+            return Promise.resolve(element.toString());
+        });
+
+        expect(outputArray).toEqual(inputArray.map((element) => element.toString()));
     });
 });

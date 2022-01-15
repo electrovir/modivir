@@ -1,25 +1,12 @@
-import {ApiRequestData, ApiRequestType, ApiResponseData} from './api-request-type';
-
-export const apiRequestKey = 'api-request-key' as const;
+import {ApiRequestData, ApiRequestType} from './api-request-type';
+import {ApiFullResponse} from './api-response';
 
 export type ApiRequestDetails<RequestTypeGeneric extends ApiRequestType> = {
     type: RequestTypeGeneric;
     requestId: string;
-} & (ApiRequestData[RequestTypeGeneric] extends undefined
-    ? {data?: undefined}
+} & (Extract<ApiRequestData[RequestTypeGeneric], undefined> extends undefined
+    ? {data?: ApiRequestData[RequestTypeGeneric]}
     : {data: ApiRequestData[RequestTypeGeneric]});
-
-export type ApiFullResponse<RequestTypeGeneric extends ApiRequestType> =
-    | {
-          success: true;
-          error: undefined;
-          data: ApiResponseData[RequestTypeGeneric];
-      }
-    | {
-          success: false;
-          error: string;
-          data: undefined;
-      };
 
 export type ApiRequestFunction = <RequestTypeGeneric extends ApiRequestType>(
     details: Omit<

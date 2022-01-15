@@ -38,3 +38,17 @@ export function filterMap<ArrayContents, MappedValue>(
         [],
     );
 }
+
+export async function asyncInOrderMap<InArrayElementType, OutArrayElementType>(
+    inputArray: Readonly<InArrayElementType[]>,
+    callback: (
+        element: InArrayElementType,
+        index: number,
+        array: Readonly<InArrayElementType[]>,
+    ) => Promise<OutArrayElementType> | OutArrayElementType,
+): Promise<OutArrayElementType[]> {
+    return await inputArray.reduce(async (lastPromise, currentElement, index, array) => {
+        const accum = await lastPromise;
+        return accum.concat(await callback(currentElement, index, array));
+    }, Promise.resolve([] as OutArrayElementType[]));
+}
