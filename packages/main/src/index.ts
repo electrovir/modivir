@@ -4,15 +4,18 @@ import {ModivirApp} from './augments/electron';
 import {initConfig} from './config/config-init';
 import {addAppListeners} from './setup/add-app-listeners';
 import {checkForUpdates} from './setup/auto-updates';
+import {setupLogging} from './setup/logging';
 import {setSecurityRestrictions} from './setup/security-restrictions';
 import {setupApiHandlers} from './setup/setup-api-handlers';
 import {startupWindow} from './setup/window-management';
 
 async function setupApp(devMode: boolean) {
-    const electronApp = app;
-    const modivirApp: ModivirApp = Object.assign(electronApp, {window: undefined});
+    const modivirApp: ModivirApp = app;
+
+    setupLogging(modivirApp);
+
     /** Disable Hardware Acceleration for power savings */
-    electronApp.disableHardwareAcceleration();
+    modivirApp.disableHardwareAcceleration();
 
     await initConfig(modivirApp);
     await addAppListeners(modivirApp);

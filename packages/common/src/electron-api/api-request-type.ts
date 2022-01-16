@@ -8,6 +8,7 @@ import {
     createEnumValidator,
     typeofValidators,
 } from './api-validation';
+import {GetPathType} from './get-path-type';
 import {ResetType} from './reset';
 
 export const apiRequestKey = 'api-request-key' as const;
@@ -20,7 +21,7 @@ export enum ApiRequestType {
     /** Trigger a native file selection popup. */
     SelectFiles = 'select-files',
     /** Get the directory of the modivir config directory. */
-    GetConfigDir = 'get-config-dir',
+    GetPath = 'get-path',
     /** Open a given file path in the system's default file browser. */
     ViewFilePath = 'view-file-path',
     /**
@@ -38,7 +39,7 @@ export type ApiRequestData = {
     [ApiRequestType.GetPreferences]: undefined;
     [ApiRequestType.SavePreferences]: UserPreferences;
     [ApiRequestType.SelectFiles]: OpenDialogProperty[] | undefined;
-    [ApiRequestType.GetConfigDir]: undefined;
+    [ApiRequestType.GetPath]: GetPathType;
     [ApiRequestType.ViewFilePath]: string;
     [ApiRequestType.EditSongs]: Song[];
     [ApiRequestType.ReadLibrary]: undefined;
@@ -49,7 +50,7 @@ export type ApiResponseData = {
     [ApiRequestType.GetPreferences]: UserPreferences | undefined;
     [ApiRequestType.SavePreferences]: boolean;
     [ApiRequestType.SelectFiles]: string[] | undefined;
-    [ApiRequestType.GetConfigDir]: string;
+    [ApiRequestType.GetPath]: string;
     [ApiRequestType.ViewFilePath]: void;
     [ApiRequestType.EditSongs]: LibraryWriteResult[];
     [ApiRequestType.ReadLibrary]: Song[] | undefined;
@@ -75,8 +76,8 @@ export const apiValidators: {
         ),
         response: createAllowUndefinedValidator(createArrayValidator(typeofValidators.string)),
     },
-    [ApiRequestType.GetConfigDir]: {
-        request: undefined,
+    [ApiRequestType.GetPath]: {
+        request: createEnumValidator(GetPathType),
         response: typeofValidators.string,
     },
     [ApiRequestType.ViewFilePath]: {

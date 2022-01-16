@@ -2,6 +2,15 @@ import {OpenDialogProperty} from '@packages/common/src/electron-api/electron-typ
 import {dialog, MessageBoxOptions, MessageBoxReturnValue} from 'electron';
 import {getBrowserWindow} from '../augments/electron';
 
+const currentDialogAbortControllers = new Set<AbortController>();
+
+export function closeAllDialogs() {
+    currentDialogAbortControllers.forEach((abortController) => {
+        abortController.abort();
+    });
+    currentDialogAbortControllers.clear();
+}
+
 export async function selectFiles(
     inputProperties: OpenDialogProperty[] = [
         OpenDialogProperty.multiSelections,
@@ -9,9 +18,15 @@ export async function selectFiles(
         OpenDialogProperty.openDirectory,
     ],
 ): Promise<undefined | string[]> {
+    const abortController = new AbortController();
+    currentDialogAbortControllers.add(abortController);
+
     const dialogResult = await dialog.showOpenDialog({
         properties: inputProperties,
     });
+
+    currentDialogAbortControllers.delete(abortController);
+
     if (dialogResult.canceled) {
         return undefined;
     } else {
@@ -20,6 +35,7 @@ export async function selectFiles(
 }
 
 export async function showMessageBox(
+    title: string,
     message: string,
     options: Omit<MessageBoxOptions, 'message'> = {},
 ): Promise<MessageBoxReturnValue> {
@@ -27,10 +43,17 @@ export async function showMessageBox(
     if (!window) {
         throw new Error(`No browser window to attach confirm dialog to.`);
     }
+    const abortController = new AbortController();
+    currentDialogAbortControllers.add(abortController);
+
     const dialogResult = await dialog.showMessageBox(window, {
         ...options,
-        message,
+        message: title,
+        detail: message,
+        signal: abortController.signal,
     });
+
+    currentDialogAbortControllers.delete(abortController);
 
     return dialogResult;
 }

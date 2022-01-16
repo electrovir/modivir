@@ -4,7 +4,7 @@ import {
     ApiResponseData,
 } from '@packages/common/src/electron-api/api-request-type';
 import {ModivirApp} from '../augments/electron';
-import {getConfigDir} from '../config/config-path';
+import {getPath} from '../config/config-path';
 import {resetConfig} from '../config/config-reset';
 import {readSongs} from '../config/library/library-read';
 import {writeSongs} from '../config/library/library-write';
@@ -23,7 +23,7 @@ const apiHandlers: {
     [ApiRequestType.SavePreferences]: saveUserPreferences,
     [ApiRequestType.GetPreferences]: (input, app) => readUserPreferences(app),
     [ApiRequestType.SelectFiles]: selectFiles,
-    [ApiRequestType.GetConfigDir]: (input, app) => getConfigDir(app),
+    [ApiRequestType.GetPath]: (input, app) => getPath(input, app),
     [ApiRequestType.ViewFilePath]: (input) => viewPath(input),
     [ApiRequestType.EditSongs]: writeSongs,
     [ApiRequestType.ResetConfig]: resetConfig,

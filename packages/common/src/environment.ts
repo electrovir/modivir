@@ -33,4 +33,5 @@ export enum Package {
     Scripts = 'scripts',
 }
 
-export const AppName = 'modivir' as const;
+export const appName = 'modivir' as const;
+export const displayAppName = appName[0]?.toUpperCase() + appName.slice(1);

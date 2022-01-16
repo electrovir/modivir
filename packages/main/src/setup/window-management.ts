@@ -1,4 +1,3 @@
-import {extractMessage} from '@packages/common/src/augments/error';
 import {WindowPosition} from '@packages/common/src/data/user-preferences';
 import {devServerUrl} from '@packages/common/src/environment';
 import {prodPreloadScriptIndex} from '@packages/common/src/file-paths';
@@ -6,7 +5,8 @@ import {BrowserWindow} from 'electron';
 import {URL} from 'url';
 import {ModivirApp} from '../augments/electron';
 import {readUserPreferences} from '../config/user-preferences';
-import {saveWindowPosition, shouldUseWindowPosition} from '../config/window-position';
+import {shouldUseWindowPosition} from '../config/window-position';
+import {handleClosing} from './on-close';
 
 export async function startupWindow(modivirApp: ModivirApp, devMode: boolean) {
     let browserWindow: BrowserWindow | undefined;
@@ -92,25 +92,9 @@ async function createOrRestoreWindow(
         }
     });
 
-    let preventedAlready = false;
-
     browserWindow.on('close', async (event) => {
-        if (preventedAlready) {
-            return;
-        } else {
-            preventedAlready = true;
-        }
-
-        event.preventDefault();
-
-        try {
-            console.info(`Saved window position:`, await saveWindowPosition(modivirApp));
-        } catch (error) {
-            console.error(`Errored when saving window position: ${extractMessage(error)}`);
-            // at this point just ignore errors, we're trying to quit!
-        } finally {
-            browserWindow?.close();
-        }
+        await handleClosing(modivirApp, event);
+        browserWindow?.destroy();
     });
 
     /** URL for main window. Vite dev server for development. */

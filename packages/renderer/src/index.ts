@@ -2,6 +2,7 @@ import {emptySong, Song} from '@packages/common/src/data/song';
 import {ApiRequestType} from '@packages/common/src/electron-api/api-request-type';
 import {ApiFullResponse} from '@packages/common/src/electron-api/api-response';
 import {getElectronWindowInterface} from '@packages/common/src/electron-api/electron-window-interface';
+import {GetPathType} from '@packages/common/src/electron-api/get-path-type';
 import {ResetType} from '@packages/common/src/electron-api/reset';
 
 const api = getElectronWindowInterface();
@@ -67,14 +68,20 @@ async function testApi() {
         console.info({songs});
         playRandomSong(songs);
 
-        const configDir = await api.apiRequest({type: ApiRequestType.GetConfigDir});
+        const configDir = await api.apiRequest({
+            type: ApiRequestType.GetPath,
+            data: GetPathType.ConfigDir,
+        });
         console.info('config dir', configDir);
     } catch (error) {
         console.error(error);
     }
     const showPathButton = document.createElement('button');
 
-    const configPath = await api.apiRequest({type: ApiRequestType.GetConfigDir});
+    const configPath = await api.apiRequest({
+        type: ApiRequestType.GetPath,
+        data: GetPathType.ConfigDir,
+    });
 
     if (!configPath.success) {
         throw new Error(`Failed to get config dir.`);
