@@ -1,5 +1,4 @@
 import {ResetType} from '@packages/common/src/electron-api/reset';
-import {BrowserWindow} from 'electron';
 import {remove} from 'fs-extra';
 import {showMessageBox} from '../api/dialogs';
 import {ModivirApp} from '../augments/electron';
@@ -25,7 +24,10 @@ Are you sure you want to reset all preferences and library data?`,
                 try {
                     await backupConfig(modivirApp);
                     await remove(getConfigDir(modivirApp));
-                    BrowserWindow.getFocusedWindow()?.reload();
+
+                    // restart to init and load new configs
+                    modivirApp.relaunch();
+                    modivirApp.quit();
                     return true;
                 } catch (error) {
                     console.error(error);

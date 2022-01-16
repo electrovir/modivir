@@ -5,10 +5,10 @@ import {
 } from '@packages/common/src/electron-api/api-request-type';
 import {ModivirApp} from '../augments/electron';
 import {getConfigDir} from '../config/config-path';
+import {resetConfig} from '../config/config-reset';
 import {readSongs} from '../config/library/library-read';
 import {writeSongs} from '../config/library/library-write';
-import {resetConfig} from '../config/reset-config';
-import {readPreferences, savePreferences} from '../config/user-preferences';
+import {readUserPreferences, saveUserPreferences} from '../config/user-preferences';
 import {selectFiles} from './dialogs';
 import {viewPath} from './view-file';
 
@@ -20,8 +20,8 @@ export type ApiHandlerFunction<RequestTypeGeneric extends ApiRequestType> = (
 const apiHandlers: {
     [RequestTypeGeneric in ApiRequestType]: ApiHandlerFunction<RequestTypeGeneric>;
 } = {
-    [ApiRequestType.SavePreferences]: savePreferences,
-    [ApiRequestType.GetPreferences]: (input, app) => readPreferences(app),
+    [ApiRequestType.SavePreferences]: saveUserPreferences,
+    [ApiRequestType.GetPreferences]: (input, app) => readUserPreferences(app),
     [ApiRequestType.SelectFiles]: selectFiles,
     [ApiRequestType.GetConfigDir]: (input, app) => getConfigDir(app),
     [ApiRequestType.ViewFilePath]: (input) => viewPath(input),

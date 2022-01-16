@@ -1,34 +1,39 @@
+import {extractMessage} from '@packages/common/src/augments/error';
+import {WindowPosition} from '@packages/common/src/data/user-preferences';
 import {devServerUrl} from '@packages/common/src/environment';
 import {prodPreloadScriptIndex} from '@packages/common/src/file-paths';
-import {App, BrowserWindow} from 'electron';
+import {BrowserWindow} from 'electron';
 import {URL} from 'url';
+import {ModivirApp} from '../augments/electron';
+import {readUserPreferences} from '../config/user-preferences';
+import {saveWindowPosition, shouldUseWindowPosition} from '../config/window-position';
 
-export async function startupWindow(electronApp: App, devMode: boolean) {
+export async function startupWindow(modivirApp: ModivirApp, devMode: boolean) {
     let browserWindow: BrowserWindow | undefined;
 
     /** Prevent multiple instances */
-    const isFirstInstance = electronApp.requestSingleInstanceLock();
+    const isFirstInstance = modivirApp.requestSingleInstanceLock();
     if (!isFirstInstance) {
-        electronApp.quit();
+        modivirApp.quit();
         process.exit(0);
     }
-    electronApp.on('second-instance', async () => {
-        browserWindow = await createOrRestoreWindow(browserWindow, devMode);
+    modivirApp.on('second-instance', async () => {
+        browserWindow = await createOrRestoreWindow(browserWindow, devMode, modivirApp);
     });
 
     /** Shut down background process if all windows was closed */
-    electronApp.on('window-all-closed', () => {
+    modivirApp.on('window-all-closed', () => {
         // don't quit on macOS since apps typically stay open even when all their windows are closed
         if (process.platform !== 'darwin') {
-            electronApp.quit();
+            modivirApp.quit();
         }
     });
 
-    /** Create app window when background process is ready */
-    await electronApp.whenReady();
+    /** Create app window after background process is ready */
+    await modivirApp.whenReady();
 
     try {
-        browserWindow = await createOrRestoreWindow(browserWindow, devMode);
+        browserWindow = await createOrRestoreWindow(browserWindow, devMode, modivirApp);
     } catch (createWindowError) {
         console.error(`Failed to create window: ${createWindowError}`);
     }
@@ -37,6 +42,7 @@ export async function startupWindow(electronApp: App, devMode: boolean) {
 async function createOrRestoreWindow(
     browserWindow: BrowserWindow | undefined,
     devMode: boolean,
+    modivirApp: ModivirApp,
 ): Promise<BrowserWindow> {
     // If window already exist just show it
     if (browserWindow && !browserWindow.isDestroyed()) {
@@ -46,9 +52,21 @@ async function createOrRestoreWindow(
         return browserWindow;
     }
 
+    let userPreferences;
+
+    try {
+        userPreferences = await readUserPreferences(modivirApp);
+    } catch (error) {}
+
+    const windowPosition: WindowPosition | {} =
+        userPreferences && shouldUseWindowPosition(userPreferences?.startupWindowPosition)
+            ? userPreferences.startupWindowPosition
+            : {};
+
     browserWindow = new BrowserWindow({
         /** Use 'ready-to-show' event to show window */
         show: false,
+        ...windowPosition,
         webPreferences: {
             sandbox: true,
             /**
@@ -74,9 +92,30 @@ async function createOrRestoreWindow(
         }
     });
 
+    let preventedAlready = false;
+
+    browserWindow.on('close', async (event) => {
+        if (preventedAlready) {
+            return;
+        } else {
+            preventedAlready = true;
+        }
+
+        event.preventDefault();
+
+        try {
+            console.info(`Saved window position:`, await saveWindowPosition(modivirApp));
+        } catch (error) {
+            console.error(`Errored when saving window position: ${extractMessage(error)}`);
+            // at this point just ignore errors, we're trying to quit!
+        } finally {
+            browserWindow?.close();
+        }
+    });
+
     /** URL for main window. Vite dev server for development. */
-    const pageUrl =
-        devMode && !!devServerUrl
+    const pageUrl: string =
+        devMode && devServerUrl
             ? devServerUrl
             : new URL('../renderer/dist/index.html', 'file://' + __dirname).toString();
 

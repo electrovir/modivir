@@ -18,7 +18,7 @@ export function getConfigBackupDir(appPaths: HasGetPath): string {
     return backupsDir;
 }
 
-export function getPreferencesFilePath(appPaths: HasGetPath): string {
+export function getUserPreferencesFilePath(appPaths: HasGetPath): string {
     const configDir = getConfigDir(appPaths);
 
     return join(configDir, 'user-preferences.json');

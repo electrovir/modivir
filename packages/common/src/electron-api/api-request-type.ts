@@ -57,7 +57,7 @@ export type ApiResponseData = {
 };
 
 export const apiValidators: {
-    [RequestTypeGeneric in ApiRequestType]: ApiValidationPair<RequestTypeGeneric>;
+    [RequestTypeGeneric in ApiRequestType]: ApiValidation<RequestTypeGeneric>;
 } = {
     [ApiRequestType.GetPreferences]: {
         request: undefined,
@@ -102,7 +102,7 @@ export type ApiValidator<
     ResponseOrRequestData extends ApiRequestData | ApiResponseData,
 > = (input: any) => input is ResponseOrRequestData[RequestTypeGeneric];
 
-export type ApiValidationPair<RequestTypeGeneric extends ApiRequestType> = {
+export type ApiValidation<RequestTypeGeneric extends ApiRequestType> = {
     request: ApiRequestData[RequestTypeGeneric] extends undefined | void
         ? undefined
         : ApiValidator<RequestTypeGeneric, ApiRequestData>;
@@ -111,9 +111,7 @@ export type ApiValidationPair<RequestTypeGeneric extends ApiRequestType> = {
         : ApiValidator<RequestTypeGeneric, ApiResponseData>;
 };
 
-export function getGenericApiValidator(
-    requestType: ApiRequestType,
-): ApiValidationPair<ApiRequestType> {
+export function getGenericApiValidator(requestType: ApiRequestType): ApiValidation<ApiRequestType> {
     const validator = apiValidators[requestType];
     if (!validator) {
         throw new Error(`No validators defined for request type "${requestType}".`);

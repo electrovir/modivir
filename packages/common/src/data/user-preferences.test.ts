@@ -1,13 +1,25 @@
-import {isValidUserPreferences, UserPreferences} from './user-preferences';
+import {emptyUserPreferences, isValidUserPreferences, UserPreferences} from './user-preferences';
 
 describe(isValidUserPreferences.name, () => {
     it('should work on valid user preferences objects', () => {
         const validUserPreferences: UserPreferences[] = [
             {
+                ...emptyUserPreferences,
                 libraryDirectoryPath: 'some words go here',
             },
             {
+                ...emptyUserPreferences,
                 libraryDirectoryPath: '',
+            },
+            {
+                ...emptyUserPreferences,
+                startupWindowPosition: {
+                    height: 100,
+                    width: 100,
+                    x: 100,
+                    y: 100,
+                    useLast: false,
+                },
             },
         ];
 

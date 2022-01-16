@@ -1,63 +1,97 @@
 import {extractMessage} from '@packages/common/src/augments/error';
-import {isValidUserPreferences, UserPreferences} from '@packages/common/src/data/user-preferences';
-import {existsSync} from 'fs';
-import {ensureDir} from 'fs-extra';
+import {
+    emptyUserPreferences,
+    isValidUserPreferences,
+    UserPreferences,
+} from '@packages/common/src/data/user-preferences';
+import {ensureDir, ensureFile} from 'fs-extra';
 import {dirname, join} from 'path';
 import {HasGetPath} from '../augments/electron';
 import {readPackedJson, writePackedJson} from '../augments/file-system';
-import {getConfigDir, getPreferencesFilePath} from './config-path';
+import {getConfigDir, getUserPreferencesFilePath} from './config-path';
 
-async function getDefaultUserPreferences(appPaths: HasGetPath): Promise<UserPreferences> {
+function getDefaultUserPreferences(appPaths: HasGetPath): UserPreferences {
     const libraryDirectoryPath = join(getConfigDir(appPaths), 'library');
 
     return {
         libraryDirectoryPath,
+        startupWindowPosition: emptyUserPreferences.startupWindowPosition,
     };
 }
 
-let readAttemptDepth = 0;
+async function getUpdatedUserPreferences(appPaths: HasGetPath): Promise<UserPreferences> {
+    const preferencesPath = getUserPreferencesFilePath(appPaths);
+    await ensureFile(preferencesPath);
+    const defaultPreferences = getDefaultUserPreferences(appPaths);
 
-export async function readPreferences(appPaths: HasGetPath): Promise<UserPreferences> {
-    readAttemptDepth++;
-    const preferencesPath = getPreferencesFilePath(appPaths);
+    const rawFromFile = await readPackedJson(preferencesPath);
+    const preferencesFromFile: object =
+        rawFromFile && typeof rawFromFile === 'object' ? rawFromFile : {};
 
-    if (existsSync(preferencesPath)) {
-        try {
-            const parsedLibrary = await readPackedJson(preferencesPath);
+    const parsedLibrary = {
+        ...defaultPreferences,
+        ...preferencesFromFile,
+    };
 
-            if (!isValidUserPreferences(parsedLibrary)) {
-                throw new Error(`User preferences file contents failed validation.`);
-            }
-
-            readAttemptDepth = 0;
-            return parsedLibrary;
-        } catch (error) {
-            throw new Error(`Failed to read user preferences file: ${extractMessage(error)}`);
-        }
-    } else {
-        if (readAttemptDepth > 2) {
-            throw new Error(`Failed to save off default user preferences multiple times.`);
-        }
-        await savePreferences(await getDefaultUserPreferences(appPaths), appPaths);
-        return await getDefaultUserPreferences(appPaths);
+    if (!isValidUserPreferences(parsedLibrary)) {
+        throw new Error(`Updated user preferences file contents failed validation.`);
     }
+
+    return parsedLibrary;
 }
 
-export async function savePreferences(
-    input: UserPreferences,
+/**
+ * Save and read user preferences. Insert all default values to make sure the file is up to date to
+ * the latest user preferences format.
+ */
+export async function updateUserPreferences(appPaths: HasGetPath): Promise<UserPreferences> {
+    await saveUserPreferences(await getUpdatedUserPreferences(appPaths), appPaths);
+    return await getUpdatedUserPreferences(appPaths);
+}
+
+/** Just read the preferences file as is. */
+export async function readUserPreferences(appPaths: HasGetPath): Promise<UserPreferences> {
+    const preferencesPath = getUserPreferencesFilePath(appPaths);
+    const fromFile = await readPackedJson(preferencesPath);
+
+    if (!isValidUserPreferences(fromFile)) {
+        throw new Error(`Read user preferences from file contents failed validation.`);
+    }
+    return fromFile;
+}
+
+/** Combine a part of the user preferences object with what is already saved on disk. */
+export async function insertUserPreferences(
+    partialPreferences: Partial<UserPreferences>,
     appPaths: HasGetPath,
 ): Promise<boolean> {
-    const preferencesPath = getPreferencesFilePath(appPaths);
-    await ensureDir(dirname(preferencesPath));
+    return await saveUserPreferences(
+        {...(await getUpdatedUserPreferences(appPaths)), ...partialPreferences},
+        appPaths,
+    );
+}
 
-    await writePackedJson(preferencesPath, input);
+export async function saveUserPreferences(
+    newUserPreferences: UserPreferences,
+    appPaths: HasGetPath,
+): Promise<boolean> {
+    const userPreferencesPath = getUserPreferencesFilePath(appPaths);
+    await ensureDir(dirname(userPreferencesPath));
+
+    await writePackedJson(userPreferencesPath, newUserPreferences);
 
     // check that valid preferences was written
     // todo: deep equality check to make sure written data was identical to data that was intended to be written
-    const writtenPreferences = await readPreferences(appPaths);
+    let writtenUserPreferences;
 
-    if (!writtenPreferences) {
-        throw new Error(`Wrote preferences but file is empty`);
+    try {
+        writtenUserPreferences = await readUserPreferences(appPaths);
+    } catch (error) {
+        throw new Error(`Failed to save preferences: ${extractMessage(error)}`);
+    }
+
+    if (!writtenUserPreferences) {
+        throw new Error(`Saved preferences but file is empty`);
     }
 
     return true;
