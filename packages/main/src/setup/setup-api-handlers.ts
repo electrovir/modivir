@@ -10,10 +10,11 @@ import {
     getApiResponseEventName,
 } from '@packages/common/src/electron-api/api-response';
 import {isEnumValue} from 'augment-vir';
-import {App, ipcMain} from 'electron';
+import {ipcMain} from 'electron';
 import {getGenericApiHandler} from '../api/api-handlers';
+import {ModivirApp} from '../augments/electron';
 
-export function setupApiHandler(devMode: boolean, electronApp: App) {
+export function setupApiHandlers(devMode: boolean, modivirApp: ModivirApp) {
     ipcMain.on(apiRequestKey, async (event, requestDetails: ApiRequestDetails<ApiRequestType>) => {
         function sendReply(response: ApiFullResponse<ApiRequestType>) {
             const responseId = getApiResponseEventName(
@@ -47,7 +48,7 @@ export function setupApiHandler(devMode: boolean, electronApp: App) {
             const handler = getGenericApiHandler(requestType);
             let response;
             try {
-                response = await handler(requestDetails.data, electronApp);
+                response = await handler(requestDetails.data, modivirApp);
                 if (devMode) {
                     console.info(
                         `Responding to request ${requestDetails.type} ${requestDetails.requestId}:`,

@@ -2,12 +2,12 @@ import {extractMessage} from '@packages/common/src/augments/error';
 import {isValidSong, Song} from '@packages/common/src/data/song';
 import {assertIsValidArray} from '@packages/common/src/electron-api/api-validation';
 import {existsSync} from 'fs';
+import {HasGetPath} from '../../augments/electron';
 import {readPackedJson} from '../../augments/file-system';
-import {CanGetPath} from '../config-path';
 import {getSongsPath} from './library-files';
 import {initLibrary} from './library-init';
 
-export async function readSongs(appPaths: CanGetPath): Promise<Song[]> {
+export async function readSongs(appPaths: HasGetPath): Promise<Song[]> {
     const songsFilePath = await getSongsPath(appPaths);
 
     if (!existsSync(songsFilePath)) {

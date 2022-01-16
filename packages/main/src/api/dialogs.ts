@@ -1,5 +1,5 @@
 import {OpenDialogProperty} from '@packages/common/src/electron-api/electron-types';
-import {dialog} from 'electron';
+import {BrowserWindow, dialog, MessageBoxOptions, MessageBoxReturnValue} from 'electron';
 
 export async function selectFiles(
     inputProperties: OpenDialogProperty[] = [
@@ -16,4 +16,20 @@ export async function selectFiles(
     } else {
         return dialogResult.filePaths;
     }
+}
+
+export async function showMessageBox(
+    message: string,
+    options: Omit<MessageBoxOptions, 'message'> = {},
+): Promise<MessageBoxReturnValue> {
+    const window = BrowserWindow.getFocusedWindow();
+    if (!window) {
+        throw new Error(`No browser window to attach confirm dialog to.`);
+    }
+    const dialogResult = await dialog.showMessageBox(window, {
+        ...options,
+        message,
+    });
+
+    return dialogResult;
 }

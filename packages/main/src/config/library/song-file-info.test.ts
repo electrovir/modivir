@@ -1,10 +1,11 @@
 import {isValidSongFileStats, SongFileStats} from '@packages/common/src/data/song';
 import {repoDir} from '@packages/common/src/file-paths';
-import {join} from 'path';
-import {getSongFileStats} from './song-file-info';
+import {dirname, join} from 'path';
+import {failedToDetermineAudioFormatMessage, getSongFileStats} from './song-file-info';
 
 const testSongFiles = {
     epicSong: join(repoDir, 'test-files', 'songs', 'boxcat-games', 'BoxCat Games - Epic Song.mp3'),
+    notSong: join(repoDir, 'test-files', 'songs', 'not-a-song-file.txt'),
 };
 
 describe(getSongFileStats.name, () => {
@@ -30,5 +31,15 @@ describe(getSongFileStats.name, () => {
             lossless: false,
             sampleRate: 44100,
         });
+    });
+
+    it('should fail on non music files', async () => {
+        await expect(
+            async () => await getSongFileStats(dirname(testSongFiles.epicSong)),
+        ).rejects.toThrow(Error);
+
+        await expect(async () => await getSongFileStats(testSongFiles.notSong)).rejects.toThrow(
+            failedToDetermineAudioFormatMessage,
+        );
     });
 });

@@ -3,10 +3,11 @@ import {isValidUserPreferences, UserPreferences} from '@packages/common/src/data
 import {existsSync} from 'fs';
 import {ensureDir} from 'fs-extra';
 import {dirname, join} from 'path';
+import {HasGetPath} from '../augments/electron';
 import {readPackedJson, writePackedJson} from '../augments/file-system';
-import {CanGetPath, getConfigDir, getPreferencesFilePath} from './config-path';
+import {getConfigDir, getPreferencesFilePath} from './config-path';
 
-async function getDefaultUserPreferences(appPaths: CanGetPath): Promise<UserPreferences> {
+async function getDefaultUserPreferences(appPaths: HasGetPath): Promise<UserPreferences> {
     const libraryDirectoryPath = join(getConfigDir(appPaths), 'library');
 
     return {
@@ -16,7 +17,7 @@ async function getDefaultUserPreferences(appPaths: CanGetPath): Promise<UserPref
 
 let readAttemptDepth = 0;
 
-export async function readPreferences(appPaths: CanGetPath): Promise<UserPreferences> {
+export async function readPreferences(appPaths: HasGetPath): Promise<UserPreferences> {
     readAttemptDepth++;
     const preferencesPath = getPreferencesFilePath(appPaths);
 
@@ -44,7 +45,7 @@ export async function readPreferences(appPaths: CanGetPath): Promise<UserPrefere
 
 export async function savePreferences(
     input: UserPreferences,
-    appPaths: CanGetPath,
+    appPaths: HasGetPath,
 ): Promise<boolean> {
     const preferencesPath = getPreferencesFilePath(appPaths);
     await ensureDir(dirname(preferencesPath));

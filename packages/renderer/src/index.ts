@@ -2,6 +2,7 @@ import {emptySong, Song} from '@packages/common/src/data/song';
 import {ApiRequestType} from '@packages/common/src/electron-api/api-request-type';
 import {ApiFullResponse} from '@packages/common/src/electron-api/api-response';
 import {getElectronWindowInterface} from '@packages/common/src/electron-api/electron-window-interface';
+import {ResetType} from '@packages/common/src/electron-api/reset';
 
 const api = getElectronWindowInterface();
 
@@ -26,12 +27,12 @@ function playRandomSong(songs: Song[]) {
     });
 }
 
-console.log(api.versions);
+console.info(api.versions);
 
 async function populateLibrary(): Promise<ApiFullResponse<ApiRequestType.ReadLibrary>> {
     const files = await api.apiRequest({type: ApiRequestType.SelectFiles});
     if (files.data) {
-        console.log(files.data);
+        console.info(files.data);
         const newSongs: Song[] = files.data.map((filePath) => ({
             ...emptySong,
             filePath,
@@ -41,7 +42,7 @@ async function populateLibrary(): Promise<ApiFullResponse<ApiRequestType.ReadLib
             data: newSongs,
         });
 
-        console.log({saveSongs});
+        console.info({saveSongs: saveSongs.data});
     }
     return await api.apiRequest({type: ApiRequestType.ReadLibrary});
 }
@@ -63,11 +64,11 @@ async function readLibrary(alreadyTried = false): Promise<Song[]> {
 async function testApi() {
     try {
         const songs = await readLibrary();
-        console.log({songs});
+        console.info({songs});
         playRandomSong(songs);
 
         const configDir = await api.apiRequest({type: ApiRequestType.GetConfigDir});
-        console.log('config dir', configDir);
+        console.info('config dir', configDir);
     } catch (error) {
         console.error(error);
     }
@@ -79,11 +80,19 @@ async function testApi() {
         throw new Error(`Failed to get config dir.`);
     }
 
-    showPathButton.addEventListener('click', () => {
-        api.apiRequest({type: ApiRequestType.ViewFilePath, data: configPath.data});
+    showPathButton.addEventListener('click', async () => {
+        await api.apiRequest({type: ApiRequestType.ViewFilePath, data: configPath.data});
     });
     showPathButton.innerText = 'Show Config Dir';
     document.body.appendChild(showPathButton);
+
+    const resetConfigButton = document.createElement('button');
+    resetConfigButton.addEventListener('click', async () => {
+        await api.apiRequest({type: ApiRequestType.ResetConfig, data: ResetType.All});
+    });
+
+    resetConfigButton.innerText = 'Reset All Configs';
+    document.body.appendChild(resetConfigButton);
 }
 
 testApi();

@@ -1,11 +1,11 @@
 import {existsSync} from 'fs';
 import {readFile} from 'fs/promises';
 import {join} from 'path';
+import {HasGetPath} from '../../augments/electron';
 import {checkFile, writePackedJson} from '../../augments/file-system';
-import {CanGetPath} from '../config-path';
 import {getLibraryDir, songsFile} from './library-files';
 
-export async function initLibrary(appPaths: CanGetPath): Promise<void> {
+export async function initLibrary(appPaths: HasGetPath): Promise<void> {
     const libraryFiles = [
         {
             filePath: songsFile,

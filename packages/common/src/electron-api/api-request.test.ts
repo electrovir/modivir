@@ -1,4 +1,4 @@
-import {ApiRequestDetails} from './api-request';
+import {ApiRequestInit} from './api-request';
 import {ApiRequestData, ApiRequestType} from './api-request-type';
 import {OpenDialogProperty} from './electron-types';
 
@@ -6,6 +6,7 @@ describe('ApiRequestDetails', () => {
     it('should allow undefined when undefined is an option', () => {
         const allowsUndefined = ApiRequestType.SelectFiles;
         const onlyAcceptsUndefined = ApiRequestType.GetPreferences;
+        const onlyAcceptsDefined = ApiRequestType.EditSongs;
 
         // ensure this type still allows undefined
         const requestDataMaybeUndefined1: ApiRequestData[typeof allowsUndefined] = undefined;
@@ -18,35 +19,28 @@ describe('ApiRequestDetails', () => {
         // @ts-expect-error
         const requestDataMustBeUndefined2: ApiRequestData[typeof onlyAcceptsUndefined] = [];
 
-        const requestDetailsMaybeUndefined: Omit<
-            ApiRequestDetails<typeof allowsUndefined>,
-            'requestId'
-        > = {
+        const requestDetailsMaybeUndefined: ApiRequestInit<typeof allowsUndefined> = {
             type: allowsUndefined,
         };
 
-        const requestDetailsMaybeDefined: Omit<
-            ApiRequestDetails<typeof allowsUndefined>,
-            'requestId'
-        > = {
+        const requestDetailsMaybeDefined: ApiRequestInit<typeof allowsUndefined> = {
             type: allowsUndefined,
             data: [OpenDialogProperty.multiSelections],
         };
 
-        const requestDetailsMaybeDefinedPoorly: Omit<
-            ApiRequestDetails<typeof allowsUndefined>,
-            'requestId'
-        > = {
+        const requestDetailsMaybeDefinedPoorly: ApiRequestInit<typeof allowsUndefined> = {
             type: allowsUndefined,
             // @ts-expect-error
             data: [5],
         };
 
-        const requestDetailsMustBeUndefined: Omit<
-            ApiRequestDetails<typeof onlyAcceptsUndefined>,
-            'requestId'
-        > = {
+        const requestDetailsMustBeUndefined: ApiRequestInit<typeof onlyAcceptsUndefined> = {
             type: onlyAcceptsUndefined,
+        };
+
+        // @ts-expect-error
+        const requestDetailsMustBeDefined: ApiRequestInit<typeof onlyAcceptsDefined> = {
+            type: onlyAcceptsDefined,
         };
     });
 });

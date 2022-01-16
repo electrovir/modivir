@@ -3,9 +3,9 @@ import {LibraryWriteResult, validateLibraryWriteResult} from './library-write-re
 describe(validateLibraryWriteResult.name, () => {
     it('should return true for valid library write results', () => {
         const validResults: LibraryWriteResult[] = [
-            {success: true},
-            {success: false, error: 'hello there'},
-            {success: false, error: ''},
+            {success: true, filePath: ''},
+            {success: false, error: 'hello there', filePath: ''},
+            {success: false, error: '', filePath: ''},
         ];
 
         expect(validResults.length).toBeGreaterThan(0);

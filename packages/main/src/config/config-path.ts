@@ -1,24 +1,24 @@
 import {AppName} from '@packages/common/src/environment';
-import {App} from 'electron';
 import {join} from 'path';
+import {HasGetPath} from '../augments/electron';
 import {checkDir} from '../augments/file-system';
 
-/**
- * This is usually just the electron app but since we are ONLY using it in many places just for this
- * one method, might as well not require the entire app.
- */
-export type CanGetPath = {
-    getPath: App['getPath'];
-};
-
-export function getConfigDir(appPaths: CanGetPath): string {
+export function getConfigDir(appPaths: HasGetPath): string {
     const configDir = join(appPaths.getPath('userData'), `${AppName}-config`);
     checkDir(configDir);
 
     return configDir;
 }
 
-export function getPreferencesFilePath(appPaths: CanGetPath): string {
+export function getConfigBackupDir(appPaths: HasGetPath): string {
+    const defaultConfigDir = getConfigDir(appPaths);
+    const backupsDir = defaultConfigDir.replace(/(?:\/|\\)$|$/, '-backups');
+    checkDir(backupsDir);
+
+    return backupsDir;
+}
+
+export function getPreferencesFilePath(appPaths: HasGetPath): string {
     const configDir = getConfigDir(appPaths);
 
     return join(configDir, 'user-preferences.json');

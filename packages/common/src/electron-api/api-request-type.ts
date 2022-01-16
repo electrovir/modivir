@@ -8,6 +8,7 @@ import {
     createEnumValidator,
     typeofValidators,
 } from './api-validation';
+import {ResetType} from './reset';
 
 export const apiRequestKey = 'api-request-key' as const;
 
@@ -30,6 +31,7 @@ export enum ApiRequestType {
     EditSongs = 'edit-songs',
     /** Read the whole library at once! */
     ReadLibrary = 'read-library',
+    ResetConfig = 'reset-config',
 }
 
 export type ApiRequestData = {
@@ -40,6 +42,7 @@ export type ApiRequestData = {
     [ApiRequestType.ViewFilePath]: string;
     [ApiRequestType.EditSongs]: Song[];
     [ApiRequestType.ReadLibrary]: undefined;
+    [ApiRequestType.ResetConfig]: ResetType;
 };
 
 export type ApiResponseData = {
@@ -50,6 +53,7 @@ export type ApiResponseData = {
     [ApiRequestType.ViewFilePath]: void;
     [ApiRequestType.EditSongs]: LibraryWriteResult[];
     [ApiRequestType.ReadLibrary]: Song[] | undefined;
+    [ApiRequestType.ResetConfig]: boolean;
 };
 
 export const apiValidators: {
@@ -86,6 +90,10 @@ export const apiValidators: {
     [ApiRequestType.ReadLibrary]: {
         request: undefined,
         response: createArrayValidator(isValidSong),
+    },
+    [ApiRequestType.ResetConfig]: {
+        request: createEnumValidator(ResetType),
+        response: typeofValidators.boolean,
     },
 };
 

@@ -3,17 +3,18 @@ import {
     ApiRequestType,
     ApiResponseData,
 } from '@packages/common/src/electron-api/api-request-type';
-import {App} from 'electron';
+import {ModivirApp} from '../augments/electron';
 import {getConfigDir} from '../config/config-path';
 import {readSongs} from '../config/library/library-read';
 import {writeSongs} from '../config/library/library-write';
+import {resetConfig} from '../config/reset-config';
 import {readPreferences, savePreferences} from '../config/user-preferences';
 import {selectFiles} from './dialogs';
 import {viewPath} from './view-file';
 
 export type ApiHandlerFunction<RequestTypeGeneric extends ApiRequestType> = (
     requestInput: ApiRequestData[RequestTypeGeneric],
-    electronApp: App,
+    modivirApp: ModivirApp,
 ) => Promise<ApiResponseData[RequestTypeGeneric]> | ApiResponseData[RequestTypeGeneric];
 
 const apiHandlers: {
@@ -25,6 +26,7 @@ const apiHandlers: {
     [ApiRequestType.GetConfigDir]: (input, app) => getConfigDir(app),
     [ApiRequestType.ViewFilePath]: (input) => viewPath(input),
     [ApiRequestType.EditSongs]: writeSongs,
+    [ApiRequestType.ResetConfig]: resetConfig,
     [ApiRequestType.ReadLibrary]: (input, app) => {
         try {
             return readSongs(app);
