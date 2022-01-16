@@ -1,5 +1,6 @@
 import {WindowPosition} from '@packages/common/src/data/user-preferences';
-import {getBrowserWindow, HasGetPath} from '../augments/electron';
+import {HasGetPath} from '../augments/electron';
+import {getBrowserWindow} from '../setup/window-management';
 import {insertUserPreferences, readUserPreferences} from './user-preferences';
 
 export async function saveWindowPosition(

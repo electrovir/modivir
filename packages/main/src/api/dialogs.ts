@@ -1,6 +1,6 @@
 import {OpenDialogProperty} from '@packages/common/src/electron-api/electron-types';
 import {dialog, MessageBoxOptions, MessageBoxReturnValue} from 'electron';
-import {getBrowserWindow} from '../augments/electron';
+import {getBrowserWindow} from '../setup/window-management';
 
 const currentDialogAbortControllers = new Set<AbortController>();
 

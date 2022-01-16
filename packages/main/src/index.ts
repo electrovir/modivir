@@ -7,7 +7,7 @@ import {checkForUpdates} from './setup/auto-updates';
 import {setupLogging} from './setup/logging';
 import {setSecurityRestrictions} from './setup/security-restrictions';
 import {setupApiHandlers} from './setup/setup-api-handlers';
-import {startupWindow} from './setup/window-management';
+import {startupWindow} from './setup/setup-main-window';
 
 async function setupApp(devMode: boolean) {
     const modivirApp: ModivirApp = app;
