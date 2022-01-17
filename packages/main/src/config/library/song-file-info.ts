@@ -30,7 +30,14 @@ export async function getSongFileStats(filePath: string): Promise<SongFileStats>
     } catch (error) {
         if (hasErrno(error)) {
             if (error.errno === -21) {
-                throw new Error(`Cannot get song stats for a directory.`);
+                throw new Error(`Cannot get song stats for a directory: ${filePath}`);
+            } else if (error.errno === -4071) {
+                /**
+                 * So far I've only seen this errno on Windows. The message is:
+                 *
+                 * "Error: EINVAL: invalid argument, read"
+                 */
+                throw new Error(`Invalid file type for song stats: ${filePath}`);
             }
         }
         throw error;
