@@ -13,8 +13,14 @@ export async function saveWindowPosition(
     }
 
     if (browserWindow && (await readUserPreferences(appPaths)).startupWindowPosition.useLast) {
-        const [x, y] = browserWindow.getPosition() as [number, number];
-        const [width, height] = browserWindow.getSize() as [number, number];
+        const [
+            x,
+            y,
+        ] = browserWindow.getPosition() as [number, number];
+        const [
+            width,
+            height,
+        ] = browserWindow.getSize() as [number, number];
 
         const position = {x, y, width, height};
 

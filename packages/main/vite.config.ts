@@ -6,7 +6,11 @@ const config: UserConfig = generateViteConfig({
     rootDir: __dirname,
     target: 'node',
     rollupOptions: {
-        external: ['electron', 'electron-devtools-installer', ...builtinModules],
+        external: [
+            'electron',
+            'electron-devtools-installer',
+            ...builtinModules,
+        ],
         output: {
             entryFileNames: '[name].cjs',
         },

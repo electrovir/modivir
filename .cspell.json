@@ -1,5 +1,8 @@
 {
-    "ignorePaths": ["./build-resources/", "./test-files/"],
+    "ignorePaths": [
+        "./build-resources/",
+        "./test-files/"
+    ],
     "import": ".cspell-base.json",
     "words": [
         "asar",

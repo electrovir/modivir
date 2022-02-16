@@ -1,6 +1,7 @@
-import * as versions from '@packages/common/src/electron-vendors.cache.json';
 import {RollupOptions} from 'rollup';
 import {PluginOption, UserConfig} from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import * as versions from './electron-vendors.cache.json';
 import {buildMode, isDevMode} from './environment';
 import {packagesDir} from './file-paths';
 
@@ -27,7 +28,10 @@ export function generateViteConfig({
     libraryMode = true,
 }: ViteConfigInputs): UserConfig {
     return {
-        plugins,
+        plugins: [
+            tsconfigPaths(),
+            ...plugins,
+        ],
         mode: buildMode,
         base: '',
         root: rootDir,

@@ -21,7 +21,10 @@ A backup of your data is stored in ${backupLocation}.`,
                     cancelId: 0,
                     defaultId: 1,
                     noLink: true,
-                    buttons: ['Cancel', 'Delete Everything'],
+                    buttons: [
+                        'Cancel',
+                        'Delete Everything',
+                    ],
                 },
             );
             if (result.response) {

@@ -19,7 +19,14 @@ describe(isValidSong.name, () => {
     });
 
     it('should fail on invalid song objects', () => {
-        const invalidSongs: any[] = [{}, 3, 'hello', [], {filePath: 4}, {filePath: 'just a path'}];
+        const invalidSongs: any[] = [
+            {},
+            3,
+            'hello',
+            [],
+            {filePath: 4},
+            {filePath: 'just a path'},
+        ];
 
         invalidSongs.forEach((invalidSong) => {
             expect(isValidSong(invalidSong)).toBe(false);

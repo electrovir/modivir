@@ -3,7 +3,12 @@ import {inspect} from 'util';
 import {HasGetPath} from '../augments/electron';
 import {getCurrentLogFilePath} from '../config/config-path';
 
-const consolePropertiesToHighJack = ['log', 'info', 'error', 'dir'] as const;
+const consolePropertiesToHighJack = [
+    'log',
+    'info',
+    'error',
+    'dir',
+] as const;
 
 export function setupLogging(appPaths: HasGetPath) {
     consolePropertiesToHighJack.forEach((consoleProp) => {

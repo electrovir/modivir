@@ -1,11 +1,13 @@
 import {filterMap} from '@packages/common/src/augments/array';
 import {extractMessage} from '@packages/common/src/augments/error';
 import {Package} from '@packages/common/src/environment';
-import {packagesDir} from '@packages/common/src/file-paths';
+import {packageConfigPaths, packagesDir} from '@packages/common/src/file-paths';
 import {getEnumTypedValues, safeMatch} from 'augment-vir';
 import {interpolationSafeWindowsPath, runShellCommand} from 'augment-vir/dist/node';
 import chalk from 'chalk';
 import {existsSync} from 'fs';
+
+const ignoredFiles: string[] = [packageConfigPaths[Package.Renderer]];
 
 async function cleanTsGrep(searchFor: string): Promise<string[]> {
     /**
@@ -34,7 +36,10 @@ async function checkAugmentVirImports(): Promise<void> {
     const augmentVirLines = await cleanTsGrep("from \\'augment-vir");
 
     augmentVirLines.forEach((line) => {
-        const [filePath, fileLine] = line.split(/:\d+:/);
+        const [
+            filePath,
+            fileLine,
+        ] = line.split(/:\d+:/);
         if (!filePath || !existsSync(filePath)) {
             throw new Error(`Invalid file path returned by grep output: ${line}`);
         }
@@ -42,7 +47,10 @@ async function checkAugmentVirImports(): Promise<void> {
             throw new Error(`Extracted no file line from grep output on ${line}`);
         }
 
-        const [, importPath] = safeMatch(fileLine, /'(augment-vir.*?)'/);
+        const [
+            ,
+            importPath,
+        ] = safeMatch(fileLine, /'(augment-vir.*?)'/);
         if (
             // allow the base import
             importPath !== 'augment-vir' &&
@@ -64,9 +72,20 @@ async function checkPackageImports() {
         )
     ).flat();
 
-    const actualBadImports = crossPackageLines.filter(
-        (line) => !!line.match(/from\s+'(?:\.\.\/)+/),
-    );
+    const actualBadImports = crossPackageLines.filter((line) => {
+        if (line.match(/from\s+'(?:\.\.\/)+/)) {
+            const fileName = safeMatch(line, /(^.+\.ts):\d+:/)[1];
+            if (!fileName) {
+                throw new Error(`Could not extract file name from ${line}`);
+            }
+            if (ignoredFiles.includes(fileName)) {
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    });
 
     if (actualBadImports.length) {
         throw new Error(

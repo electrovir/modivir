@@ -27,7 +27,12 @@ describe(hasProperty.name, () => {
 
 describe(isObject.name, () => {
     it('should return true on valid objects', () => {
-        const validObjects: any[] = [{}, {a: 'hello', b: 'there'}, new Date(), []];
+        const validObjects: any[] = [
+            {},
+            {a: 'hello', b: 'there'},
+            new Date(),
+            [],
+        ];
 
         validObjects.forEach((validObject) => {
             expect(isObject(validObject)).toBe(true);
@@ -35,7 +40,12 @@ describe(isObject.name, () => {
     });
 
     it('should fail on non-objects', () => {
-        const invalidObjects: any[] = ['a', 3, true, BigInt(4)];
+        const invalidObjects: any[] = [
+            'a',
+            3,
+            true,
+            BigInt(4),
+        ];
 
         invalidObjects.forEach((invalidObject) => {
             expect(isObject(invalidObject)).toBe(false);

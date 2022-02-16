@@ -6,7 +6,10 @@ describe(matchesShallowObjectSignature.name, () => {
             a: 'hello',
             b: 'there',
             c: 4,
-            what: ['it does not matter what is in here because', 'it only does shallow checking'],
+            what: [
+                'it does not matter what is in here because',
+                'it only does shallow checking',
+            ],
         };
         const comparisonObject = {
             a: 'what',
@@ -18,8 +21,20 @@ describe(matchesShallowObjectSignature.name, () => {
     });
 
     it('should work on arrays', () => {
-        const testObject = [1, 2, 3, 'hello', 'there'];
-        const comparisonObject = [54, 42, 10, 'what', 'ever'];
+        const testObject = [
+            1,
+            2,
+            3,
+            'hello',
+            'there',
+        ];
+        const comparisonObject = [
+            54,
+            42,
+            10,
+            'what',
+            'ever',
+        ];
         expect(matchesShallowObjectSignature(testObject, comparisonObject)).toBe(true);
     });
 
@@ -29,7 +44,10 @@ describe(matchesShallowObjectSignature.name, () => {
             b: 'there',
             c: 4,
             d: 54,
-            what: ['it does not matter what is in here because', 'it only does shallow checking'],
+            what: [
+                'it does not matter what is in here because',
+                'it only does shallow checking',
+            ],
         };
         const comparisonObject = {
             a: 'what',
@@ -46,7 +64,10 @@ describe(matchesShallowObjectSignature.name, () => {
             b: 'there',
             c: 4,
             d: 54,
-            what: ['it does not matter what is in here because', 'it only does shallow checking'],
+            what: [
+                'it does not matter what is in here because',
+                'it only does shallow checking',
+            ],
         };
         const comparisonObject = {
             a: 'what',
