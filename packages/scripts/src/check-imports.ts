@@ -8,6 +8,7 @@ import chalk from 'chalk';
 import {existsSync} from 'fs';
 
 const ignoredFiles: string[] = [packageConfigPaths[Package.Renderer]];
+console.log({ignoredFiles});
 
 async function cleanTsGrep(searchFor: string): Promise<string[]> {
     /**
